@@ -12,7 +12,7 @@ The default value for html_last_updated_fmt_ is changed to the empty string.
 
 Usage
     #. Install the Python package ``sphinx-last-updated-by-git``
-    #. Add ``sphinx_last_updated_by_git`` to ``extensions`` in your ``conf.py``
+    #. Add ``'sphinx_last_updated_by_git'`` to ``extensions`` in your ``conf.py``
     #. Run Sphinx!
 
 License
