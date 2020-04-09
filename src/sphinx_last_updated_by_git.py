@@ -39,10 +39,9 @@ def _html_page_context(app, pagename, templatename, context, doctree):
     lufmt = app.config.html_last_updated_fmt
     if lufmt is None or 'sourcename' not in context:
         return
-    dates = []
     sourcefile = Path(app.confdir, pagename + context['page_source_suffix'])
     try:
-        dates.append(get_datetime(sourcefile))
+        dates = [get_datetime(sourcefile)]
     except subprocess.CalledProcessError as e:
         logger.warning('Git error:\n%s', e.stderr, location=pagename)
         return
@@ -52,10 +51,13 @@ def _html_page_context(app, pagename, templatename, context, doctree):
 
     # Check dependencies (if they are in a Git repo)
     for dep in app.env.dependencies[pagename]:
+        path = Path(app.confdir, dep)
         try:
-            dates.append(get_datetime(Path(app.confdir, dep)))
+            date = get_datetime(path)
         except Exception:
             continue
+        else:
+            dates.append(date)
 
     context['last_updated'] = format_date(
         lufmt or _('%b %d, %Y'),
