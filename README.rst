@@ -15,6 +15,20 @@ Usage
     #. Add ``'sphinx_last_updated_by_git'`` to ``extensions`` in your ``conf.py``
     #. Run Sphinx!
 
+Caveats
+    * When using a "Git shallow clone" (with the ``--depth`` option),
+      the "last updated" time for long-unchanged files
+      might be more recent than expected,
+      because the commit containing their last change hasn't been checked out.
+
+      This might happen on https://readthedocs.org/
+      because they use shallow clones by default.
+      The DONT_SHALLOW_CLONE_ feature should fix this.
+
+    * The date might not be displayed on https://readthedocs.org/
+      when using the ``sphinx_rtd_theme`` (which is their default).
+      See `issue #1`_.
+
 License
     BSD-2-Clause (same as Sphinx itself),
     for more information take a look at the ``LICENSE`` file.
@@ -28,3 +42,6 @@ Similar stuff
     templating.html#last_updated
 .. _html_last_updated_fmt: https://www.sphinx-doc.org/en/master/
     usage/configuration.html#confval-html_last_updated_fmt
+.. _DONT_SHALLOW_CLONE: https://read-the-docs.readthedocs.io/en/latest/
+    guides/feature-flags.html
+.. _issue #1: https://github.com/mgeier/sphinx-last-updated-by-git/issues/1
