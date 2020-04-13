@@ -36,6 +36,7 @@ License
 Similar stuff
     | https://github.com/jdillard/sphinx-gitstamp
     | https://github.com/OddBloke/sphinx-git
+    | https://github.com/MestreLion/git-tools (``git-restore-mtime``)
 
 .. _Sphinx: https://www.sphinx-doc.org/
 .. _last_updated: https://www.sphinx-doc.org/en/master/
