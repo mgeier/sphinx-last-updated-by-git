@@ -48,6 +48,13 @@ def _html_page_context(app, pagename, templatename, context, doctree):
     except FileNotFoundError as e:
         logger.warning('"git" command not found: %s', e, location=pagename)
         return
+    except NotInRepository:
+        # This source file is most likely auto-generated (e.g. by autosummary)
+        if not app.config.git_untracked_show_sourcelink:
+            del context['sourcename']
+        if not app.config.git_untracked_check_dependencies:
+            return
+        dates = []
 
     # Check dependencies (if they are in a Git repo)
     for dep in app.env.dependencies[pagename]:
@@ -58,6 +65,10 @@ def _html_page_context(app, pagename, templatename, context, doctree):
             continue
         else:
             dates.append(date)
+
+    if not dates:
+        # Source file not in repo and no dependencies to get last_updated from
+        return
 
     context['last_updated'] = format_date(
         lufmt or _('%b %d, %Y'),
@@ -75,6 +86,10 @@ def setup(app):
     app.require_sphinx('1.8')  # For "config-inited" event
     app.connect('html-page-context', _html_page_context)
     app.connect('config-inited', _config_inited)
+    app.add_config_value(
+        'git_untracked_check_dependencies', True, rebuild='html')
+    app.add_config_value(
+        'git_untracked_show_sourcelink', False, rebuild='html')
     return {
         'version': __version__,
         'parallel_read_safe': True,
