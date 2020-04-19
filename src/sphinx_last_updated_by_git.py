@@ -18,20 +18,33 @@ class NotInRepository(Exception):
     """The file is not in a Git repo."""
 
 
+class TooShallow(Exception):
+    """The file was last updated in the initial commit of a shallow clone."""
+
+
 def get_datetime(path):
     """Obtain the "author time" for *path* from Git."""
     path = Path(path)
-    cmd = ['git', 'log', '-n1', '--pretty=format:%at', '--', path.name]
-    timestamp = subprocess.check_output(
-        cmd,
-        cwd=path.parent,
-        stderr=subprocess.PIPE,
-        universal_newlines=True,
-    )
-    if not timestamp:
+
+    def run_command(cmd):
+        return subprocess.check_output(
+            cmd,
+            cwd=path.parent,
+            stderr=subprocess.PIPE,
+            universal_newlines=True,
+        )
+
+    result = run_command(
+        ['git', 'log', '-n1', '--pretty=tformat:%at%n%P', '--', path.name])
+    if not result:
         raise NotInRepository(path)
-    timestamp = int(timestamp)
-    return datetime.datetime.fromtimestamp(timestamp)
+    timestamp, parents = result.splitlines()
+    if not parents:
+        # --is-shallow-repository is available since Git 2.15.
+        result = run_command(['git', 'rev-parse', '--is-shallow-repository'])
+        if result.rstrip('\n') == 'true':
+            raise TooShallow(path)
+    return datetime.datetime.fromtimestamp(int(timestamp))
 
 
 def _html_page_context(app, pagename, templatename, context, doctree):
@@ -40,8 +53,9 @@ def _html_page_context(app, pagename, templatename, context, doctree):
     if lufmt is None or 'sourcename' not in context:
         return
     sourcefile = Path(app.confdir, pagename + context['page_source_suffix'])
+    dates = []
     try:
-        dates = [get_datetime(sourcefile)]
+        dates.append(get_datetime(sourcefile))
     except subprocess.CalledProcessError as e:
         logger.warning('Git error:\n%s', e.stderr, location=pagename)
         return
@@ -49,12 +63,13 @@ def _html_page_context(app, pagename, templatename, context, doctree):
         logger.warning('"git" command not found: %s', e, location=pagename)
         return
     except NotInRepository:
-        # This source file is most likely auto-generated (e.g. by autosummary)
         if not app.config.git_untracked_show_sourcelink:
             del context['sourcename']
         if not app.config.git_untracked_check_dependencies:
             return
-        dates = []
+        shallow = False
+    except TooShallow:
+        shallow = True
 
     # Check dependencies (if they are in a Git repo)
     for dep in app.env.dependencies[pagename]:
@@ -67,7 +82,9 @@ def _html_page_context(app, pagename, templatename, context, doctree):
             dates.append(date)
 
     if not dates:
-        # Source file not in repo and no dependencies to get last_updated from
+        if shallow:
+            logger.info(
+                '%s: Git clone too shallow', __name__, location=pagename)
         return
 
     context['last_updated'] = format_date(

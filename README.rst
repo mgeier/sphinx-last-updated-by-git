@@ -28,9 +28,10 @@ Usage
 
 Caveats
     * When using a "Git shallow clone" (with the ``--depth`` option),
-      the "last updated" time for long-unchanged files
-      might be more recent than expected,
-      because the commit containing their last change hasn't been checked out.
+      the "last updated" commit for a long-unchanged file
+      might not have been checked out.
+      In this case, the last_updated_ time is set to ``None``
+      (and an info message is shown during the build).
 
       This might happen on https://readthedocs.org/
       because they use shallow clones by default.
