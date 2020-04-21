@@ -29,7 +29,7 @@ def get_datetime(path):
     def run_command(cmd):
         return subprocess.check_output(
             cmd,
-            cwd=path.parent,
+            cwd=str(path.parent),
             stderr=subprocess.PIPE,
             universal_newlines=True,
         )
