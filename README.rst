@@ -27,6 +27,17 @@ Usage
     #. Run Sphinx!
 
 Caveats
+    * Timestamps are stored using the local time zone.
+      If you are running Sphinx on a server
+      that doesn't happen to be in your desired time zone,
+      you can change it with time.tzset_::
+          
+          import os
+          import time
+
+          os.environ['TZ'] = 'Europe/Berlin'
+          time.tzset()
+
     * When using a "Git shallow clone" (with the ``--depth`` option),
       the "last updated" commit for a long-unchanged file
       might not have been checked out.
@@ -61,6 +72,7 @@ Similar stuff
     usage/configuration.html#confval-html_show_sourcelink
 .. _html_last_updated_fmt: https://www.sphinx-doc.org/en/master/
     usage/configuration.html#confval-html_last_updated_fmt
+.. _time.tzset: https://docs.python.org/3/library/time.html#time.tzset
 .. _DONT_SHALLOW_CLONE: https://read-the-docs.readthedocs.io/en/latest/
     guides/feature-flags.html
 .. _issue #1: https://github.com/mgeier/sphinx-last-updated-by-git/issues/1

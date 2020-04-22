@@ -1,5 +1,5 @@
 """Get the "last updated" time for each Sphinx page from Git."""
-import datetime
+from datetime import datetime, timezone
 from pathlib import Path
 import subprocess
 
@@ -44,7 +44,7 @@ def get_datetime(path):
         result = run_command(['git', 'rev-parse', '--is-shallow-repository'])
         if result.rstrip('\n') == 'true':
             raise TooShallow(path)
-    return datetime.datetime.fromtimestamp(int(timestamp))
+    return datetime.fromtimestamp(int(timestamp), timezone.utc).astimezone()
 
 
 def _html_page_context(app, pagename, templatename, context, doctree):
