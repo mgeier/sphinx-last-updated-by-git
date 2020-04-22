@@ -1,0 +1,6 @@
+[submodule "tests/repo_full"]
+	path = tests/repo_full
+	url = https://github.com/mgeier/test-repo-for-sphinx-last-updated-by-git.git
+[submodule "tests/repo_shallow"]
+	path = tests/repo_shallow
+	url = https://github.com/mgeier/test-repo-for-sphinx-last-updated-by-git.git
