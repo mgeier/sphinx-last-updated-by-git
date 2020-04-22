@@ -2,3 +2,5 @@ __pycache__/
 /build/
 /dist/
 /src/sphinx_last_updated_by_git.egg-info/
+/htmlcov/
+/.coverage
