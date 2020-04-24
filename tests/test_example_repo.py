@@ -8,15 +8,15 @@ from sphinx.cmd.build import build_main
 
 
 # Set timezone to make tests reproducible
-os.environ['TZ'] = 'Europe/Berlin'
+os.environ['TZ'] = 'Factory'
 try:
     time.tzset()
 except AttributeError:
     # time.tzset() is only available on Unix systems
     pass
 
-time1 = '2020-04-22 12:41:20 GMT+02:00'
-time2 = '2020-04-23 09:24:08 GMT+02:00'
+time1 = '2020-04-22 10:41:20 GMT+00:00'
+time2 = '2020-04-23 07:24:08 GMT+00:00'
 
 expected_results = {
     'index': [time1, 'defined'],
