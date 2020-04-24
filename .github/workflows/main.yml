@@ -4,7 +4,7 @@ jobs:
   run_pytest:
     strategy:
       matrix:
-        os: [macos-latest, ubuntu-latest]
+        os: [macos-latest, windows-latest, ubuntu-latest]
         python-version: [3.5, 3.6, 3.7, 3.8]
     runs-on: ${{ matrix.os }}
     steps:
