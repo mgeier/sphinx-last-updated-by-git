@@ -82,8 +82,9 @@ def _html_page_context(app, pagename, templatename, context, doctree):
 
     if not dates:
         if shallow:
-            logger.info(
-                '%s: Git clone too shallow', __name__, location=pagename)
+            logger.warning(
+                'Git clone too shallow', location=pagename,
+                type='git', subtype='too_shallow')
         return
 
     context['last_updated'] = format_date(

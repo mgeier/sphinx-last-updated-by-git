@@ -42,11 +42,15 @@ Caveats
       the "last updated" commit for a long-unchanged file
       might not have been checked out.
       In this case, the last_updated_ time is set to ``None``
-      (and an info message is shown during the build).
+      (and a warning is shown during the build).
 
       This might happen on https://readthedocs.org/
       because they use shallow clones by default.
       The DONT_SHALLOW_CLONE_ feature should fix this.
+
+      If you want to get rid of the warning, use this in your ``conf.py``::
+
+          suppress_warnings = ['git.too_shallow']
 
     * The date might not be displayed on https://readthedocs.org/
       when using the ``sphinx_rtd_theme`` (which is their default).

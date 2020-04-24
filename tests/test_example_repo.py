@@ -83,7 +83,10 @@ def test_untracked_no_dependencies_and_show_sourcelink():
 
 
 def test_repo_shallow():
-    data = run_sphinx(test_dir / 'repo_shallow')
+    data = run_sphinx(
+        test_dir / 'repo_shallow',
+        suppress_warnings='git.too_shallow,',
+    )
     assert data == {
         **expected_results,
         'index': ['None', 'defined'],
