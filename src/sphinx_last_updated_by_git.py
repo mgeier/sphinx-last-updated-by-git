@@ -3,6 +3,7 @@ from datetime import datetime, timezone
 from pathlib import Path
 import subprocess
 
+import sphinx.errors
 from sphinx.locale import _
 from sphinx.util.i18n import format_date
 from sphinx.util.logging import getLogger
@@ -57,11 +58,9 @@ def _html_page_context(app, pagename, templatename, context, doctree):
     try:
         dates.append(get_datetime(sourcefile))
     except subprocess.CalledProcessError as e:
-        logger.warning('Git error:\n%s', e.stderr, location=pagename)
-        return
+        raise sphinx.errors.ExtensionError(e.stderr, e)
     except FileNotFoundError as e:
-        logger.warning('"git" command not found: %s', e, location=pagename)
-        return
+        raise sphinx.errors.ExtensionError('"git" command not found', e)
     except NotInRepository:
         if not app.config.git_untracked_show_sourcelink:
             del context['sourcename']
