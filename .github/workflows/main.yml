@@ -12,6 +12,9 @@ jobs:
       uses: actions/setup-python@v1
       with:
         python-version: ${{ matrix.python-version }}
+    - name: Double-check Python version
+      run: |
+        python --version
     - name: Checkout submodules
       run: |
         python tests/update_submodules.py
