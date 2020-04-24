@@ -14,13 +14,13 @@ jobs:
         python-version: ${{ matrix.python-version }}
     - name: Checkout submodules
       run: |
-        python3 tests/update_submodules.py
+        python tests/update_submodules.py
     - name: Install Python package
       run: |
-        python3 -m pip install .
+        python -m pip install .
     - name: Install test dependencies
       run: |
-        python3 -m pip install -r tests/requirements.txt
+        python -m pip install -r tests/requirements.txt
     - name: Run pytest
       run: |
-        python3 -m pytest
+        python -m pytest
