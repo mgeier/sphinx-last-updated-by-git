@@ -26,10 +26,9 @@ expected_results = {
     'search': ['None', 'undefined'],
 }
 
-test_dir = Path(__file__).parent
 
-
-def run_sphinx(srcdir, **kwargs):
+def run_sphinx(subdir, **kwargs):
+    srcdir = Path(__file__).parent / subdir
     with tempfile.TemporaryDirectory() as outdir:
         args = [str(srcdir), outdir, '-W']
         args.extend('-D{}={}'.format(k, v) for k, v in kwargs.items())
@@ -44,13 +43,13 @@ def run_sphinx(srcdir, **kwargs):
 
 
 def test_repo_full():
-    data = run_sphinx(test_dir / 'repo_full')
+    data = run_sphinx('repo_full')
     assert data == expected_results
 
 
 def test_untracked_no_dependencies():
     data = run_sphinx(
-        test_dir / 'repo_full',
+        'repo_full',
         git_untracked_check_dependencies=0,
     )
     assert data == {
@@ -61,7 +60,7 @@ def test_untracked_no_dependencies():
 
 def test_untracked_show_sourcelink():
     data = run_sphinx(
-        test_dir / 'repo_full',
+        'repo_full',
         git_untracked_show_sourcelink=1,
     )
     assert data == {
@@ -72,7 +71,7 @@ def test_untracked_show_sourcelink():
 
 def test_untracked_no_dependencies_and_show_sourcelink():
     data = run_sphinx(
-        test_dir / 'repo_full',
+        'repo_full',
         git_untracked_check_dependencies=0,
         git_untracked_show_sourcelink=1,
     )
@@ -84,7 +83,7 @@ def test_untracked_no_dependencies_and_show_sourcelink():
 
 def test_repo_shallow():
     data = run_sphinx(
-        test_dir / 'repo_shallow',
+        'repo_shallow',
         suppress_warnings='git.too_shallow,',
     )
     assert data == {
