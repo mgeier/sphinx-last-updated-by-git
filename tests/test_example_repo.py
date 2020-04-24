@@ -13,7 +13,8 @@ try:
     time.tzset()
 except AttributeError:
     # time.tzset() is only available on Unix systems
-    pass
+    import warnings
+    warnings.warn('unable to set time zone')
 
 time1 = '2020-04-22 10:41:20 GMT+00:00'
 time2 = '2020-04-23 07:24:08 GMT+00:00'
