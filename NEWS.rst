@@ -1,3 +1,9 @@
+Version 0.2.0 (2020-04-25):
+ * Change Git errors from warnings to proper errors
+ * Change "too shallow" message to proper warning (with the ability to suppress)
+ * Explicitly use the local time zone
+ * Support for Python 3.5
+
 Version 0.1.1 (2020-04-20):
  * Don't add times for too shallow Git clones
  * Handle untracked source files, add configuration options
