@@ -34,10 +34,9 @@ def run_sphinx(subdir, **kwargs):
         args.extend('-D{}={}'.format(k, v) for k, v in kwargs.items())
         result = build_main(args)
         assert result == 0
-        outdir = Path(outdir)
         data = {}
         for name in expected_results:
-            path = outdir / (name + '.html')
+            path = Path(outdir) / (name + '.html')
             data[name] = path.read_text().splitlines()
     return data
 
