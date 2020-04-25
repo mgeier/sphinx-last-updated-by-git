@@ -53,6 +53,9 @@ def _html_page_context(app, pagename, templatename, context, doctree):
     lufmt = app.config.html_last_updated_fmt
     if lufmt is None or 'sourcename' not in context:
         return
+    if app.builder.name == 'singlehtml':
+        assert context['sourcename'] == ''
+        return
     sourcefile = Path(app.confdir, pagename + context['page_source_suffix'])
     dates = []
     try:
