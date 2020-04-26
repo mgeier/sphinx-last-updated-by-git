@@ -1,5 +1,5 @@
 Version 0.2.1 (2020-04-21):
- * Set ``last_update`` to ``None`` when using a ``singlehtml`` builder
+ * Set ``last_updated`` to ``None`` when using a ``singlehtml`` builder
 
 Version 0.2.0 (2020-04-25):
  * Change Git errors from warnings to proper errors
