@@ -89,3 +89,15 @@ def test_repo_shallow():
         **expected_results,
         'index': ['None', 'defined'],
     }
+
+
+def test_custom_timezone():
+    data = run_sphinx(
+        'repo_full',
+        git_last_updated_timezone='Atlantic/Azores',
+    )
+    for doc, (time, _) in expected_results.items():
+        if time == 'None':
+            assert data[doc][0] == time
+        else:
+            assert data[doc][0] == time[:-9] + 'Azores Summer Time'
