@@ -22,8 +22,11 @@ The default value for html_last_updated_fmt_ is changed
 from ``None`` to the empty string.
 
 By default, timestamps are stored using the local time zone.
-You can specify a custom time zone (compatible to Python's ``datetime`` module)
+You can specify a datetime.timezone_ object
+(or any ``tzinfo`` subclass instance)
 with the configuration option ``git_last_updated_timezone``.
+You can also use any string recognized by babel_,
+e.g.  ``git_last_updated_timezone = 'NZ'``.
 
 Usage
     #. Install the Python package ``sphinx-last-updated-by-git``
@@ -69,7 +72,9 @@ Similar stuff
     usage/configuration.html#confval-html_show_sourcelink
 .. _html_last_updated_fmt: https://www.sphinx-doc.org/en/master/
     usage/configuration.html#confval-html_last_updated_fmt
-.. _time.tzset: https://docs.python.org/3/library/time.html#time.tzset
+.. _datetime.timezone: https://docs.python.org/3/library/
+    datetime.html#timezone-objects
+.. _babel: https://babel.pocoo.org/
 .. _DONT_SHALLOW_CLONE: https://read-the-docs.readthedocs.io/en/latest/
     guides/feature-flags.html
 .. _issue #1: https://github.com/mgeier/sphinx-last-updated-by-git/issues/1

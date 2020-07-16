@@ -102,6 +102,10 @@ def _html_page_context(app, pagename, templatename, context, doctree):
 def _config_inited(app, config):
     if config.html_last_updated_fmt is None:
         config.html_last_updated_fmt = ''
+    if isinstance(config.git_last_updated_timezone, str):
+        from babel.dates import get_timezone
+        config.git_last_updated_timezone = get_timezone(
+            config.git_last_updated_timezone)
 
 
 def setup(app):
