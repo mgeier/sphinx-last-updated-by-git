@@ -21,23 +21,16 @@ and the theme you are using must support source links in the first place.
 The default value for html_last_updated_fmt_ is changed
 from ``None`` to the empty string.
 
+By default, timestamps are stored using the local time zone.
+You can specify a custom time zone (compatible to Python's ``datetime`` module)
+with the configuration option ``git_last_updated_timezone``.
+
 Usage
     #. Install the Python package ``sphinx-last-updated-by-git``
     #. Add ``'sphinx_last_updated_by_git'`` to ``extensions`` in your ``conf.py``
     #. Run Sphinx!
 
 Caveats
-    * Timestamps are stored using the local time zone.
-      If you are running Sphinx on a server
-      that doesn't happen to be in your desired time zone,
-      you can change it with time.tzset_::
-          
-          import os
-          import time
-
-          os.environ['TZ'] = 'Europe/Berlin'
-          time.tzset()
-
     * When using a "Git shallow clone" (with the ``--depth`` option),
       the "last updated" commit for a long-unchanged file
       might not have been checked out.
