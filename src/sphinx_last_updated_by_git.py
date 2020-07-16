@@ -23,7 +23,7 @@ class TooShallow(Exception):
     """The file was last updated in the initial commit of a shallow clone."""
 
 
-def get_datetime(path):
+def get_datetime(path, tz):
     """Obtain the "author time" for *path* from Git."""
     path = Path(path)
 
@@ -45,7 +45,8 @@ def get_datetime(path):
         result = run_command(['git', 'rev-parse', '--is-shallow-repository'])
         if result.rstrip('\n') == 'true':
             raise TooShallow(path)
-    return datetime.fromtimestamp(int(timestamp), timezone.utc).astimezone()
+    utc_time = datetime.fromtimestamp(int(timestamp), timezone.utc)
+    return utc_time.astimezone(tz)
 
 
 def _html_page_context(app, pagename, templatename, context, doctree):
@@ -60,7 +61,8 @@ def _html_page_context(app, pagename, templatename, context, doctree):
     sourcefile = Path(app.confdir, pagename + context['page_source_suffix'])
     dates = []
     try:
-        dates.append(get_datetime(sourcefile))
+        dates.append(get_datetime(
+            sourcefile, app.config.git_last_updated_timezone))
     except subprocess.CalledProcessError as e:
         raise sphinx.errors.ExtensionError(e.stderr, e)
     except FileNotFoundError as e:
@@ -78,7 +80,7 @@ def _html_page_context(app, pagename, templatename, context, doctree):
     for dep in app.env.dependencies[pagename]:
         path = Path(app.confdir, dep)
         try:
-            date = get_datetime(path)
+            date = get_datetime(path, app.config.git_last_updated_timezone)
         except Exception:
             continue
         else:
@@ -111,6 +113,8 @@ def setup(app):
         'git_untracked_check_dependencies', True, rebuild='html')
     app.add_config_value(
         'git_untracked_show_sourcelink', False, rebuild='html')
+    app.add_config_value(
+        'git_last_updated_timezone', None, rebuild='html')
     return {
         'version': __version__,
         'parallel_read_safe': True,
