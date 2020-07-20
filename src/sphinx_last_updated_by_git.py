@@ -9,7 +9,7 @@ from sphinx.util.i18n import format_date
 from sphinx.util.logging import getLogger
 
 
-__version__ = '0.2.1'
+__version__ = '0.2.2'
 
 
 logger = getLogger(__name__)

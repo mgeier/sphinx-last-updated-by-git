@@ -1,3 +1,6 @@
+Version 0.2.2 (2020-07-20):
+ * Add option ``git_last_updated_timezone``
+
 Version 0.2.1 (2020-04-21):
  * Set ``last_updated`` to ``None`` when using a ``singlehtml`` builder
 
