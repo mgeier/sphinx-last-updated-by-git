@@ -101,3 +101,14 @@ def test_custom_timezone():
             assert data[doc][0] == time
         else:
             assert data[doc][0] == time[:-9] + 'Azores Summer Time'
+
+
+def test_no_git(capsys):
+    path_backup = os.environ['PATH']
+    os.environ['PATH'] = ''
+    try:
+        with pytest.raises(AssertionError):
+            run_sphinx('repo_full')
+        assert '"git" command not found' in capsys.readouterr().err
+    finally:
+        os.environ['PATH'] = path_backup
