@@ -93,10 +93,17 @@ def _html_page_context(app, pagename, templatename, context, doctree):
                 type='git', subtype='too_shallow')
         return
 
+    date = max(dates)
+
     context['last_updated'] = format_date(
         lufmt or _('%b %d, %Y'),
-        date=max(dates),
+        date=date,
         language=app.config.language)
+
+    if app.config.git_last_updated_metatags:
+        context['metatags'] += """
+    <meta property="article:modified_time" content="{}" />""".format(
+            date.isoformat())
 
 
 def _config_inited(app, config):
@@ -119,6 +126,8 @@ def setup(app):
         'git_untracked_show_sourcelink', False, rebuild='html')
     app.add_config_value(
         'git_last_updated_timezone', None, rebuild='html')
+    app.add_config_value(
+        'git_last_updated_metatags', True, rebuild='html')
     return {
         'version': __version__,
         'parallel_read_safe': True,

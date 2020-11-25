@@ -21,12 +21,16 @@ and the theme you are using must support source links in the first place.
 The default value for html_last_updated_fmt_ is changed
 from ``None`` to the empty string.
 
-By default, timestamps are stored using the local time zone.
+By default, timestamps are displayed using the local time zone.
 You can specify a datetime.timezone_ object
 (or any ``tzinfo`` subclass instance)
 with the configuration option ``git_last_updated_timezone``.
 You can also use any string recognized by babel_,
-e.g.  ``git_last_updated_timezone = 'NZ'``.
+e.g. ``git_last_updated_timezone = 'NZ'``.
+
+By default, the "last updated" timestamp is added as an HTML ``<meta>`` tag.
+This can be disabled by setting the configuration option
+``git_last_updated_metatags`` to ``False``.
 
 Usage
     #. Install the Python package ``sphinx-last-updated-by-git``
