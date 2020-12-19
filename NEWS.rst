@@ -1,3 +1,6 @@
+Version 0.2.3 (2020-12-19):
+ * Add timestamp as a ``<meta>`` tag
+
 Version 0.2.2 (2020-07-20):
  * Add option ``git_last_updated_timezone``
 
