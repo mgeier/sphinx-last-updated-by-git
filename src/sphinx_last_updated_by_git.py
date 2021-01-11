@@ -58,7 +58,7 @@ def _html_page_context(app, pagename, templatename, context, doctree):
         # This happens in 'singlehtml' builders
         assert context['sourcename'] == ''
         return
-    sourcefile = Path(app.confdir, pagename + context['page_source_suffix'])
+    sourcefile = Path(app.srcdir, pagename + context['page_source_suffix'])
     dates = []
     try:
         dates.append(get_datetime(
@@ -78,7 +78,7 @@ def _html_page_context(app, pagename, templatename, context, doctree):
 
     # Check dependencies (if they are in a Git repo)
     for dep in app.env.dependencies[pagename]:
-        path = Path(app.confdir, dep)
+        path = Path(app.srcdir, dep)
         try:
             date = get_datetime(path, app.config.git_last_updated_timezone)
         except Exception:
