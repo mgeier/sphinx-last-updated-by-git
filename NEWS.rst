@@ -1,3 +1,6 @@
+Version 0.2.4 (2021-01-21):
+ * ``srcdir`` can now be different from ``confdir``
+
 Version 0.2.3 (2020-12-19):
  * Add timestamp as a ``<meta>`` tag
 
