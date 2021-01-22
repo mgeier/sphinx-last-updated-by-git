@@ -46,15 +46,26 @@ Caveats
 
       This might happen on https://readthedocs.org/
       because they use shallow clones by default.
-      The DONT_SHALLOW_CLONE_ feature should fix this.
+      The ``DONT_SHALLOW_CLONE`` `feature flag`_ should fix this.
 
       If you want to get rid of the warning, use this in your ``conf.py``::
 
           suppress_warnings = ['git.too_shallow']
 
-    * The date might not be displayed on https://readthedocs.org/
-      when using the ``sphinx_rtd_theme`` (which is their default).
-      See `issue #1`_.
+    * When a project on https://readthedocs.org/ using their default theme
+      ``sphinx_rtd_theme`` was created before October 20th 2020,
+      the date will not be displayed in the footer.
+
+      One work-around is to enable the (undocumented) `feature flag`_
+      ``USE_SPHINX_LATEST``.
+
+      Another work-around is to override the defaults
+      by means of a ``requirements.txt`` file containing something like this::
+
+          sphinx>=2
+          sphinx_rtd_theme>=0.5
+
+      See also `issue #1`_.
 
 License
     BSD-2-Clause (same as Sphinx itself),
@@ -80,6 +91,6 @@ Similar stuff
 .. _datetime.timezone: https://docs.python.org/3/library/
     datetime.html#timezone-objects
 .. _babel: https://babel.pocoo.org/
-.. _DONT_SHALLOW_CLONE: https://read-the-docs.readthedocs.io/en/latest/
+.. _feature flag: https://docs.readthedocs.io/en/latest/
     guides/feature-flags.html
 .. _issue #1: https://github.com/mgeier/sphinx-last-updated-by-git/issues/1
