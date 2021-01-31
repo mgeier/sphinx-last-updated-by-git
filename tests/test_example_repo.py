@@ -16,11 +16,13 @@ except AttributeError:
     import warnings
     warnings.warn('unable to set time zone')
 
-time1 = '2020-04-22 10:41:20 GMT+00:00'
-time2 = '2020-04-23 07:24:08 GMT+00:00'
+time1 = '2020-04-22 10:41:20'
+time2 = '2020-04-23 07:24:08'
+time3 = '2021-01-31 20:52:36'
 
 expected_results = {
     'index': [time1, 'defined'],
+    'I 🖤 Unicode': [time3, 'defined'],
     'api': [time2, 'defined'],
     'example_module.example_function': [time2, 'undefined'],
     'search': ['None', 'undefined'],
@@ -94,13 +96,9 @@ def test_repo_shallow():
 def test_custom_timezone():
     data = run_sphinx(
         'repo_full',
-        git_last_updated_timezone='Atlantic/Azores',
+        git_last_updated_timezone='Africa/Ouagadougou',
     )
-    for doc, (time, _) in expected_results.items():
-        if time == 'None':
-            assert data[doc][0] == time
-        else:
-            assert data[doc][0] == time[:-9] + 'Azores Summer Time'
+    assert data == expected_results
 
 
 def test_no_git(capsys):

@@ -16,4 +16,4 @@ def update_submodule(name, depth):
 
 if __name__ == '__main__':
     update_submodule('repo_full', 0x7fffffff)
-    update_submodule('repo_shallow', 3)
+    update_submodule('repo_shallow', 4)
