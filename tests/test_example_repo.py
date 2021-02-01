@@ -110,3 +110,16 @@ def test_no_git(capsys):
         assert '"git" command not found' in capsys.readouterr().err
     finally:
         os.environ['PATH'] = path_backup
+
+
+def test_no_git_no_warning(capsys):
+    path_backup = os.environ['PATH']
+    os.environ['PATH'] = ''
+    try:
+        data = run_sphinx(
+            'repo_full',
+            suppress_warnings='git.command_not_found')
+    finally:
+        os.environ['PATH'] = path_backup
+    for k, v in data.items():
+        assert v == ['None', 'undefined']
