@@ -9,7 +9,7 @@ path = Path(__file__).parent
 def update_submodule(name, depth):
     subprocess.run(
         ['git', 'submodule', 'update', '--init', '--depth', str(depth), name],
-        cwd=str(path),
+        cwd=path,
         check=True,
     )
 

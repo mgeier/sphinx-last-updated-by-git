@@ -12,7 +12,7 @@ setup(
     version=__version__,
     package_dir={'': 'src'},
     py_modules=['sphinx_last_updated_by_git'],
-    python_requires='>=3.5',
+    python_requires='>=3.6',
     install_requires=[
         'sphinx>=1.8',
     ],
