@@ -6,7 +6,7 @@ import pytest
 from sphinx.cmd.build import build_main
 
 
-def create_and_run(srcdir, warning_is_error):
+def create_and_run(srcdir):
     srcdir = Path(srcdir)
     srcdir.joinpath('conf.py').write_text("""
 extensions = [
@@ -26,23 +26,21 @@ This will be an untracked dependency.
 {% if sourcename is not defined %}un{% endif %}defined
 """)
     outdir = srcdir / '_build'
-    args = [str(srcdir), str(outdir)]
-    if warning_is_error:
-        args.append('-W')
-    result = build_main(args)
-    assert result == 0
+    result = build_main([str(srcdir), str(outdir), '-W'])
+    if result != 0:
+        return None
     path = outdir / 'index.html'
     return path.read_text().splitlines()
 
 
-@pytest.mark.xfail
-def test_without_git_repo():
+def test_without_git_repo(capsys):
     with tempfile.TemporaryDirectory() as srcdir:
-        create_and_run(srcdir, warning_is_error=False)
+        assert create_and_run(srcdir) is None
+        assert 'Error getting data from Git' in capsys.readouterr().err
 
 
 def test_untracked_source_files():
     test_dir = Path(__file__).parent
     with tempfile.TemporaryDirectory(dir=str(test_dir)) as srcdir:
-        data = create_and_run(srcdir, warning_is_error=True)
+        data = create_and_run(srcdir)
     assert data == ['None', 'undefined']

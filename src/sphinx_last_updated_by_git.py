@@ -64,7 +64,8 @@ def _html_page_context(app, pagename, templatename, context, doctree):
         dates.append(get_datetime(
             sourcefile, app.config.git_last_updated_timezone))
     except subprocess.CalledProcessError as e:
-        raise sphinx.errors.ExtensionError(e.stderr, e)
+        raise sphinx.errors.ExtensionError(
+            'Error getting data from Git:\n' + e.stderr, e)
     except FileNotFoundError as e:
         raise sphinx.errors.ExtensionError('"git" command not found', e)
     except NotInRepository:
