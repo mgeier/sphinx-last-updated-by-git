@@ -32,7 +32,7 @@ expected_results = {
 def run_sphinx(subdir, **kwargs):
     srcdir = Path(__file__).parent / subdir
     with tempfile.TemporaryDirectory() as outdir:
-        args = [str(srcdir), outdir, '-W']
+        args = [str(srcdir), outdir, '-W', '-v']
         args.extend('-D{}={}'.format(k, v) for k, v in kwargs.items())
         result = build_main(args)
         assert result == 0

@@ -26,7 +26,7 @@ This will be an untracked dependency.
 {% if sourcename is not defined %}un{% endif %}defined
 """)
     outdir = srcdir / '_build'
-    result = build_main([str(srcdir), str(outdir), '-W'])
+    result = build_main([str(srcdir), str(outdir), '-W', '-v'])
     if result != 0:
         return None
     path = outdir / 'index.html'
