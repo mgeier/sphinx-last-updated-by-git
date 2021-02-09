@@ -1,3 +1,11 @@
+Version 0.3.0 (2021-02-09):
+ * Refactor to make ``git`` calls per directory instead of per file,
+   which makes this extension usable on big repositories
+ * Raise warnings instead of errors when ``git`` is not available
+   and when source files are not in a Git repo
+ * Add warning subtypes ``git.command_not_found`` and ``git.subprocess_error``
+ * Drop support for Python 3.5
+
 Version 0.2.4 (2021-01-21):
  * ``srcdir`` can now be different from ``confdir``
 
@@ -12,7 +20,8 @@ Version 0.2.1 (2020-04-21):
 
 Version 0.2.0 (2020-04-25):
  * Change Git errors from warnings to proper errors
- * Change "too shallow" message to proper warning (with the ability to suppress)
+ * Change "too shallow" message to proper warning
+   (with the ability to suppress with ``git.too_shallow``)
  * Explicitly use the local time zone
  * Support for Python 3.5
 
