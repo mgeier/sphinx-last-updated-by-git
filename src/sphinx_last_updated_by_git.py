@@ -43,6 +43,8 @@ def update_file_dates(git_dir, file_dates):
         return  # None of the requested files are under version control
     existing_files = existing_files.decode('utf-8').split('\0')
     requested_files.intersection_update(existing_files)
+    if len(requested_files) == 0:
+        return
     assert requested_files
 
     process = subprocess.Popen(
