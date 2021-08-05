@@ -88,12 +88,10 @@ def update_file_dates(git_dir, file_dates):
                 too_shallow = True
 
         for file in changed_files:
-            try:
-                requested_files.remove(file)
-            except KeyError:
+            if file not in requested_files:
                 continue
-            else:
-                file_dates[file.decode('utf-8')] = timestamp, too_shallow
+            requested_files.remove(file)
+            file_dates[file.decode('utf-8')] = timestamp, too_shallow
 
         assert parent_commits or not requested_files, (
             'unexpected root commit in {}'.format(git_dir))
