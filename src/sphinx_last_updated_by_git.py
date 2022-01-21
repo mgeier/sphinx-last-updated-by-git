@@ -63,8 +63,13 @@ def update_file_dates(git_dir, file_dates):
 
     while requested_files:
         line1 = process.stdout.readline()
-        assert line1, 'end of git log in {}, unhandled files: {}'.format(
-            git_dir, requested_files)
+        if len(line1) == 0:
+            logger.info(
+                'files added to the git index, but not commited: ' + ' '.join(
+                    map(lambda s: s.decode('utf-8'), requested_files)),
+                type='git',
+                subtype='uncomitted_files')
+            break
         timestamp, null, parent_commits = line1.rstrip().partition(b'\0')
         assert null == b'\0', 'invalid git info in {}: {}'.format(
             git_dir, line1)
@@ -94,9 +99,6 @@ def update_file_dates(git_dir, file_dates):
                 continue
             else:
                 file_dates[file.decode('utf-8')] = timestamp, too_shallow
-
-        assert parent_commits or not requested_files, (
-            'unexpected root commit in {}'.format(git_dir))
 
     # We found all requested files in the log, we don't need the rest of it:
     process.terminate()
