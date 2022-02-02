@@ -57,9 +57,15 @@ def update_file_dates(git_dir, file_dates):
 
     requested_files = set(f.encode('utf-8') for f in requested_files)
 
+    line0 = process.stdout.readline()
+    if not line0:
+        logger.info('added but uncommitted file(s) in {}: {}'.format(
+            git_dir, {f.decode('utf-8') for f in requested_files}))
+        return
+
     # First line is blank
-    line0 = process.stdout.readline().rstrip()
-    assert not line0, 'unexpected git output in {}: {}'.format(git_dir, line0)
+    assert not line0.rstrip(), 'unexpected git output in {}: {}'.format(
+        git_dir, line0)
 
     while requested_files:
         line1 = process.stdout.readline()
@@ -95,8 +101,10 @@ def update_file_dates(git_dir, file_dates):
             else:
                 file_dates[file.decode('utf-8')] = timestamp, too_shallow
 
-        assert parent_commits or not requested_files, (
-            'unexpected root commit in {}'.format(git_dir))
+        if requested_files and not parent_commits:
+            logger.info('added but uncommitted file(s) in {}: {}'.format(
+                git_dir, {f.decode('utf-8') for f in requested_files}))
+            break
 
     # We found all requested files in the log, we don't need the rest of it:
     process.terminate()
