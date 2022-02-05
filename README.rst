@@ -4,6 +4,8 @@ Get the "last updated" time for each Sphinx page from Git
 This is a little Sphinx_ extension that does exactly that.
 It also checks for included files and other dependencies and
 uses their "last updated" time if it's more recent.
+For each file, the "author date" of the Git commit where it was last changed
+is taken to be its "last updated" time.  Uncommitted changes are ignored.
 
 If a page doesn't have a source file, its last_updated_ time is set to ``None``.
 

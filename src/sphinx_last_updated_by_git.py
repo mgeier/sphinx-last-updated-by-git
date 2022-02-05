@@ -17,7 +17,7 @@ logger = getLogger(__name__)
 
 
 def update_file_dates(git_dir, file_dates):
-    """Ask Git for "author time" of given files in given directory.
+    """Ask Git for "author date" of given files in given directory.
 
     A git subprocess is executed at most three times:
 
