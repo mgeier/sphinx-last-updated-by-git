@@ -1,3 +1,6 @@
+Version 0.3.1 (2022-03-04):
+ * Handle "added" but not yet "committed" files
+
 Version 0.3.0 (2021-02-09):
  * Refactor to make ``git`` calls per directory instead of per file,
    which makes this extension usable on big repositories

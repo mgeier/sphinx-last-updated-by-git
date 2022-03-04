@@ -10,7 +10,7 @@ from sphinx.util.logging import getLogger
 from sphinx.util import status_iterator
 
 
-__version__ = '0.3.0'
+__version__ = '0.3.1'
 
 
 logger = getLogger(__name__)
