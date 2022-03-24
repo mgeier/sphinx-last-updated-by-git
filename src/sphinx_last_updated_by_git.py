@@ -54,10 +54,16 @@ def update_file_dates(git_dir, file_dates):
         stdout=subprocess.PIPE,
         # NB: We ignore stderr to avoid deadlocks when reading stdout
     )
+    with process:
+        parse_log(process.stdout, requested_files, git_dir, file_dates)
+        # We don't need the rest of the log if there's something left:
+        process.terminate()
 
+
+def parse_log(stream, requested_files, git_dir, file_dates):
     requested_files = set(f.encode('utf-8') for f in requested_files)
 
-    line0 = process.stdout.readline()
+    line0 = stream.readline()
     if not line0:
         logger.info('added but uncommitted file(s) in {}: {}'.format(
             git_dir, {f.decode('utf-8') for f in requested_files}))
@@ -68,13 +74,13 @@ def update_file_dates(git_dir, file_dates):
         git_dir, line0)
 
     while requested_files:
-        line1 = process.stdout.readline()
+        line1 = stream.readline()
         assert line1, 'end of git log in {}, unhandled files: {}'.format(
             git_dir, requested_files)
         timestamp, null, parent_commits = line1.rstrip().partition(b'\0')
         assert null == b'\0', 'invalid git info in {}: {}'.format(
             git_dir, line1)
-        line2 = process.stdout.readline().rstrip()
+        line2 = stream.readline().rstrip()
         assert line2.endswith(b'\0'), 'unexpected file list in {}: {}'.format(
             git_dir, line2)
         line2 = line2.rstrip(b'\0')
@@ -105,9 +111,6 @@ def update_file_dates(git_dir, file_dates):
             logger.info('added but uncommitted file(s) in {}: {}'.format(
                 git_dir, {f.decode('utf-8') for f in requested_files}))
             break
-
-    # We found all requested files in the log, we don't need the rest of it:
-    process.terminate()
 
 
 def _env_updated(app, env):
