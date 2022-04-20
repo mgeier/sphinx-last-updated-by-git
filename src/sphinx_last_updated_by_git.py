@@ -48,7 +48,8 @@ def update_file_dates(git_dir, file_dates):
     process = subprocess.Popen(
         [
             'git', 'log', '--pretty=format:%n%at%x00%P', '--author-date-order',
-            '--relative', '--name-only', '-z', '-m', '--', *requested_files
+            '--relative', '--name-only', '--no-show-signature', '-z', '-m',
+            '--', *requested_files
         ],
         cwd=git_dir,
         stdout=subprocess.PIPE,
