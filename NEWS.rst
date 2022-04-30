@@ -1,3 +1,7 @@
+Version 0.3.2 (2022-04-30):
+ * Use ``--no-show-signature`` to avoid error when ``log.showSignature`` is on
+ * Properly stop ``git log`` subprocess even on error (to avoid warnings)
+
 Version 0.3.1 (2022-03-04):
  * Handle "added" but not yet "committed" files
 
