@@ -220,6 +220,7 @@ def _html_page_context(app, pagename, templatename, context, doctree):
         timestamp, show_sourcelink = data
     if not show_sourcelink:
         del context['sourcename']
+        del context['page_source_suffix']
     if timestamp is None:
         return
 
