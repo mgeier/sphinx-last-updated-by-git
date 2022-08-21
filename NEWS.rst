@@ -1,3 +1,6 @@
+Version 0.3.3 (2022-08-21):
+ * Remove ``page_source_suffix`` from ``context`` if there is no source link
+
 Version 0.3.2 (2022-04-30):
  * Use ``--no-show-signature`` to avoid error when ``log.showSignature`` is on
  * Properly stop ``git log`` subprocess even on error (to avoid warnings)
