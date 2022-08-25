@@ -2,7 +2,9 @@
 from collections import defaultdict
 from contextlib import suppress
 from datetime import datetime, timezone
+from fnmatch import fnmatch
 from pathlib import Path
+from typing import List
 import subprocess
 
 from sphinx.locale import _
@@ -115,6 +117,14 @@ def parse_log(stream, requested_files, git_dir, file_dates):
             break
 
 
+def is_file_ignored(file: Path, ignored_files: List[str]) -> bool:
+    """Check if a file matches a list of ignored files using fnmatch"""
+    for ignored_file in ignored_files:
+        if fnmatch(str(file), ignored_file):
+            return True
+    return False
+
+
 def _env_updated(app, env):
     # NB: We call git once per sub-directory, because each one could
     #     potentially be a separate Git repo (or at least a submodule)!
@@ -131,6 +141,8 @@ def _env_updated(app, env):
         if data is not None:
             continue  # No need to update this source file
         srcfile = Path(env.doc2path(docname)).resolve()
+        if is_file_ignored(srcfile, app.config.git_ignored_files):
+            continue
         src_dates[srcfile.parent][srcfile.name] = None
         src_paths[docname] = srcfile.parent, srcfile.name
 
@@ -173,6 +185,8 @@ def _env_updated(app, env):
         for dep in env.dependencies[docname]:
             # NB: dependencies are relative to srcdir and may contain ".."!
             depfile = Path(env.srcdir, dep).resolve()
+            if is_file_ignored(depfile, app.config.git_ignored_files):
+                continue
             dep_dates[depfile.parent][depfile.name] = None
             dep_paths[docname].append((depfile.parent, depfile.name))
 
@@ -293,6 +307,7 @@ def setup(app):
         'git_last_updated_timezone', None, rebuild='env')
     app.add_config_value(
         'git_last_updated_metatags', True, rebuild='html')
+    app.add_config_value('git_ignored_files', [], rebuild='env')
     return {
         'version': __version__,
         'parallel_read_safe': True,
