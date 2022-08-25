@@ -160,3 +160,33 @@ def test_exclude_patterns_deps_dates():
         'api': [time1, 'defined'],
         'example_module.example_function': ['None', 'undefined'],
     }
+
+
+def test_exclude_commits_dates():
+    data = run_sphinx(
+        'repo_full',
+        git_exclude_commits='6bb90c6027c3788d3891f833f017dbf8d229e432')
+    assert data == {
+        **expected_results,
+        'api': [time1, 'defined'],
+        'example_module.example_function': [time1, 'undefined'],
+    }
+
+
+def test_exclude_commits_warning(capsys):
+    with pytest.raises(AssertionError):
+        run_sphinx(
+            'repo_full',
+            git_exclude_commits='23d25d0b7ac4604b7a9545420b2f9de84daabe73')
+    assert 'unhandled files' in capsys.readouterr().err
+
+
+def test_exclude_commits_without_warning():
+    data = run_sphinx(
+        'repo_full',
+        suppress_warnings='git.unhandled_files',
+        git_exclude_commits='23d25d0b7ac4604b7a9545420b2f9de84daabe73')
+    assert data == {
+        **expected_results,
+        'I 🖤 Unicode': ['None', 'undefined'],
+    }

@@ -18,7 +18,7 @@ __version__ = '0.3.3'
 logger = getLogger(__name__)
 
 
-def update_file_dates(git_dir, file_dates):
+def update_file_dates(git_dir, exclude_commits, file_dates):
     """Ask Git for "author date" of given files in given directory.
 
     A git subprocess is executed at most three times:
@@ -50,21 +50,22 @@ def update_file_dates(git_dir, file_dates):
 
     process = subprocess.Popen(
         [
-            'git', 'log', '--pretty=format:%n%at%x00%P', '--author-date-order',
-            '--relative', '--name-only', '--no-show-signature', '-z', '-m',
-            '--', *requested_files
+            'git', 'log', '--pretty=format:%n%at%x00%H%x00%P',
+            '--author-date-order', '--relative', '--name-only',
+            '--no-show-signature', '-z', '-m', '--', *requested_files
         ],
         cwd=git_dir,
         stdout=subprocess.PIPE,
         # NB: We ignore stderr to avoid deadlocks when reading stdout
     )
     with process:
-        parse_log(process.stdout, requested_files, git_dir, file_dates)
+        parse_log(process.stdout, requested_files,
+                  git_dir, exclude_commits, file_dates)
         # We don't need the rest of the log if there's something left:
         process.terminate()
 
 
-def parse_log(stream, requested_files, git_dir, file_dates):
+def parse_log(stream, requested_files, git_dir, exclude_commits, file_dates):
     requested_files = set(f.encode('utf-8') for f in requested_files)
 
     line0 = stream.readline()
@@ -75,11 +76,19 @@ def parse_log(stream, requested_files, git_dir, file_dates):
 
     while requested_files:
         line1 = stream.readline()
-        assert line1, 'end of git log in {}, unhandled files: {}'.format(
-            git_dir, requested_files)
-        timestamp, null, parent_commits = line1.rstrip().partition(b'\0')
-        assert null == b'\0', 'invalid git info in {}: {}'.format(
+        if not line1:
+            msg = 'end of git log in {}, unhandled files: {}'
+            assert exclude_commits, msg.format(
+                git_dir, requested_files)
+            msg = 'unhandled files in {}: {}, due to excluded commits: {}'
+            logger.warning(
+                msg.format(git_dir, requested_files, exclude_commits),
+                type='git', subtype='unhandled_files')
+            break
+        pieces = line1.rstrip().split(b'\0')
+        assert len(pieces) == 3, 'invalid git info in {}: {}'.format(
             git_dir, line1)
+        timestamp, commit, parent_commits = pieces
         line2 = stream.readline().rstrip()
         assert line2.endswith(b'\0'), 'unexpected file list in {}: {}'.format(
             git_dir, line2)
@@ -87,6 +96,9 @@ def parse_log(stream, requested_files, git_dir, file_dates):
         assert line2, 'no changed files in {} (parent commit(s): {})'.format(
             git_dir, parent_commits)
         changed_files = line2.split(b'\0')
+
+        if commit in exclude_commits:
+            continue
 
         too_shallow = False
         if not parent_commits:
@@ -120,6 +132,8 @@ def _env_updated(app, env):
     src_paths = {}
     src_dates = defaultdict(dict)
     excluded = Matcher(app.config.git_exclude_patterns)
+    exclude_commits = set(
+        map(lambda h: h.encode('utf-8'), app.config.git_exclude_commits))
 
     for docname, data in env.git_last_updated.items():
         if data is not None:
@@ -135,7 +149,7 @@ def _env_updated(app, env):
         'fuchsia', len(src_dates), app.verbosity, stringify_func=to_relpath)
     for git_dir in srcdir_iter:
         try:
-            update_file_dates(git_dir, src_dates[git_dir])
+            update_file_dates(git_dir, exclude_commits, src_dates[git_dir])
         except subprocess.CalledProcessError as e:
             msg = 'Error getting data from Git'
             msg += ' (no "last updated" dates will be shown'
@@ -179,7 +193,7 @@ def _env_updated(app, env):
         'turquoise', len(dep_dates), app.verbosity, stringify_func=to_relpath)
     for git_dir in depdir_iter:
         try:
-            update_file_dates(git_dir, dep_dates[git_dir])
+            update_file_dates(git_dir, exclude_commits, dep_dates[git_dir])
         except subprocess.CalledProcessError as e:
             pass  # We ignore errors in dependencies
 
@@ -292,6 +306,8 @@ def setup(app):
     app.add_config_value(
         'git_last_updated_metatags', True, rebuild='html')
     app.add_config_value('git_exclude_patterns', [], rebuild='env')
+    app.add_config_value(
+        'git_exclude_commits', [], rebuild='env')
     return {
         'version': __version__,
         'parallel_read_safe': True,

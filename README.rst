@@ -45,6 +45,10 @@ Options
       These patterns are checked on both source files and dependencies
       and are treated the same way as Sphinx's exclude_patterns_.
 
+    * Individual commits can be excluded from the last updated date
+      calculation by passing a list of commit hashes to the configuration
+      option ``git_exclude_commits``.
+
 Caveats
     * When using a "Git shallow clone" (with the ``--depth`` option),
       the "last updated" commit for a long-unchanged file
