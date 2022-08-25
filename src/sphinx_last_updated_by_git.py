@@ -1,5 +1,6 @@
 """Get the "last updated" time for each Sphinx page from Git."""
 from collections import defaultdict
+from contextlib import suppress
 from datetime import datetime, timezone
 from pathlib import Path
 import subprocess
@@ -118,6 +119,11 @@ def _env_updated(app, env):
     # NB: We call git once per sub-directory, because each one could
     #     potentially be a separate Git repo (or at least a submodule)!
 
+    def to_relpath(f: Path) -> str:
+        with suppress(ValueError):
+            f = f.relative_to(app.srcdir)
+        return str(f)
+
     src_paths = {}
     src_dates = defaultdict(dict)
 
@@ -130,7 +136,7 @@ def _env_updated(app, env):
 
     srcdir_iter = status_iterator(
         src_dates, 'getting Git timestamps for source files... ',
-        'fuchsia', len(src_dates))
+        'fuchsia', len(src_dates), app.verbosity, stringify_func=to_relpath)
     for git_dir in srcdir_iter:
         try:
             update_file_dates(git_dir, src_dates[git_dir])
@@ -172,7 +178,7 @@ def _env_updated(app, env):
 
     depdir_iter = status_iterator(
         dep_dates, 'getting Git timestamps for dependencies... ',
-        'turquoise', len(dep_dates))
+        'turquoise', len(dep_dates), app.verbosity, stringify_func=to_relpath)
     for git_dir in depdir_iter:
         try:
             update_file_dates(git_dir, dep_dates[git_dir])
