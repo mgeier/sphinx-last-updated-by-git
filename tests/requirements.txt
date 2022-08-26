@@ -1,2 +1,3 @@
+sphinx==4.5.0  # temporary, see https://github.com/mgeier/sphinx-last-updated-by-git/issues/40
 pytest
 pytest-cov
