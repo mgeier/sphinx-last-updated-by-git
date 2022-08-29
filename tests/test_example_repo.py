@@ -82,7 +82,13 @@ def test_untracked_no_dependencies_and_show_sourcelink():
     }
 
 
-def test_repo_shallow():
+def test_repo_shallow(capsys):
+    with pytest.raises(AssertionError):
+        run_sphinx('repo_shallow')
+    assert 'too shallow' in capsys.readouterr().err
+
+
+def test_repo_shallow_without_warning():
     data = run_sphinx(
         'repo_shallow',
         suppress_warnings='git.too_shallow,',
