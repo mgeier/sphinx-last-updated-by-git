@@ -44,7 +44,7 @@ Options
       ``git_exclude_patterns``.
       This can also be used to ignore the changes of dependencies in the last
       updated date.
-      The patterns are treated the same way as Sphinx's excluded_patterns_.
+      The patterns are treated the same way as Sphinx's exclude_patterns_.
 
 Caveats
     * When using a "Git shallow clone" (with the ``--depth`` option),
