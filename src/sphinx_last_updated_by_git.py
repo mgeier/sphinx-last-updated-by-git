@@ -36,7 +36,8 @@ def update_file_dates(git_dir, file_dates):
 
     existing_files = subprocess.check_output(
         [
-            'git', 'ls-files', '-z', '--', *requested_files
+            'git', 'ls-tree', '--name-only', '-z', 'HEAD',
+            '--', *requested_files
         ],
         cwd=git_dir,
         stderr=subprocess.PIPE,
@@ -67,10 +68,6 @@ def parse_log(stream, requested_files, git_dir, file_dates):
     requested_files = set(f.encode('utf-8') for f in requested_files)
 
     line0 = stream.readline()
-    if not line0:
-        logger.info('added but uncommitted file(s) in {}: {}'.format(
-            git_dir, {f.decode('utf-8') for f in requested_files}))
-        return
 
     # First line is blank
     assert not line0.rstrip(), 'unexpected git output in {}: {}'.format(
@@ -109,11 +106,6 @@ def parse_log(stream, requested_files, git_dir, file_dates):
                 continue
             else:
                 file_dates[file.decode('utf-8')] = timestamp, too_shallow
-
-        if requested_files and not parent_commits:
-            logger.info('added but uncommitted file(s) in {}: {}'.format(
-                git_dir, {f.decode('utf-8') for f in requested_files}))
-            break
 
 
 def _env_updated(app, env):
