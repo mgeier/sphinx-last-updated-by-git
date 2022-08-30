@@ -42,9 +42,8 @@ Options
     * Files can be excluded from the last updated date calculation by passing
       a list of exclusion patterns to the configuration option
       ``git_exclude_patterns``.
-      This can also be used to ignore the changes of dependencies in the last
-      updated date.
-      The patterns are treated the same way as Sphinx's exclude_patterns_.
+      These patterns are checked on both source files and dependencies
+      and are treated the same way as Sphinx's exclude_patterns_.
 
 Caveats
     * When using a "Git shallow clone" (with the ``--depth`` option),

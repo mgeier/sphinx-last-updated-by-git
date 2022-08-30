@@ -139,7 +139,7 @@ def test_exclude_patterns_srcdir_relative():
 def test_exclude_patterns_glob():
     data = run_sphinx(
         'repo_full',
-        git_exclude_patterns='**/*.rst',
+        git_exclude_patterns='*.rst',
     )
     assert data == {
         **expected_results,
@@ -153,7 +153,7 @@ def test_exclude_patterns_glob():
 def test_exclude_patterns_deps_dates():
     data = run_sphinx(
         'repo_full',
-        git_exclude_patterns='*.py',
+        git_exclude_patterns='example_module.py',
     )
     assert data == {
         **expected_results,
