@@ -123,3 +123,40 @@ def test_no_git_no_warning(capsys):
         os.environ['PATH'] = path_backup
     for k, v in data.items():
         assert v == ['None', 'undefined']
+
+
+def test_exclude_patterns_srcdir_relative():
+    data = run_sphinx(
+        'repo_full',
+        git_exclude_patterns='I 🖤 Unicode.rst',
+    )
+    assert data == {
+        **expected_results,
+        'I 🖤 Unicode': ['None', 'undefined'],
+    }
+
+
+def test_exclude_patterns_glob():
+    data = run_sphinx(
+        'repo_full',
+        git_exclude_patterns='*.rst',
+    )
+    assert data == {
+        **expected_results,
+        'index': ['None', 'undefined'],
+        'I 🖤 Unicode': ['None', 'undefined'],
+        'api': ['None', 'undefined'],
+        'example_module.example_function': ['None', 'undefined'],
+    }
+
+
+def test_exclude_patterns_deps_dates():
+    data = run_sphinx(
+        'repo_full',
+        git_exclude_patterns='example_module.py',
+    )
+    assert data == {
+        **expected_results,
+        'api': [time1, 'defined'],
+        'example_module.example_function': ['None', 'undefined'],
+    }

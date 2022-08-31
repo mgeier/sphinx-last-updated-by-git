@@ -39,6 +39,12 @@ Options
       tag.  This can be disabled by setting the configuration option
       ``git_last_updated_metatags`` to ``False``.
 
+    * Files can be excluded from the last updated date calculation by passing
+      a list of exclusion patterns to the configuration option
+      ``git_exclude_patterns``.
+      These patterns are checked on both source files and dependencies
+      and are treated the same way as Sphinx's exclude_patterns_.
+
 Caveats
     * When using a "Git shallow clone" (with the ``--depth`` option),
       the "last updated" commit for a long-unchanged file
@@ -82,6 +88,8 @@ Similar stuff
 .. _Sphinx: https://www.sphinx-doc.org/
 .. _last_updated: https://www.sphinx-doc.org/en/master/
     templating.html#last_updated
+.. _exclude_patterns: https://www.sphinx-doc.org/en/master/usage/
+    configuration.html#confval-exclude_patterns
 .. _autosummary_generate: https://www.sphinx-doc.org/en/master/
     usage/extensions/autosummary.html#confval-autosummary_generate
 .. _html_copy_source: https://www.sphinx-doc.org/en/master/

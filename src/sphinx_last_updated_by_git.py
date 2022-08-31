@@ -8,6 +8,7 @@ import subprocess
 from sphinx.locale import _
 from sphinx.util.i18n import format_date
 from sphinx.util.logging import getLogger
+from sphinx.util.matching import Matcher
 from sphinx.util import status_iterator
 
 
@@ -126,10 +127,13 @@ def _env_updated(app, env):
 
     src_paths = {}
     src_dates = defaultdict(dict)
+    excluded = Matcher(app.config.git_exclude_patterns)
 
     for docname, data in env.git_last_updated.items():
         if data is not None:
             continue  # No need to update this source file
+        if excluded(env.doc2path(docname, False)):
+            continue
         srcfile = Path(env.doc2path(docname)).resolve()
         src_dates[srcfile.parent][srcfile.name] = None
         src_paths[docname] = srcfile.parent, srcfile.name
@@ -172,6 +176,8 @@ def _env_updated(app, env):
             candi_dates[docname].append(date)
         for dep in env.dependencies[docname]:
             # NB: dependencies are relative to srcdir and may contain ".."!
+            if excluded(dep):
+                continue
             depfile = Path(env.srcdir, dep).resolve()
             dep_dates[depfile.parent][depfile.name] = None
             dep_paths[docname].append((depfile.parent, depfile.name))
@@ -293,6 +299,7 @@ def setup(app):
         'git_last_updated_timezone', None, rebuild='env')
     app.add_config_value(
         'git_last_updated_metatags', True, rebuild='html')
+    app.add_config_value('git_exclude_patterns', [], rebuild='env')
     return {
         'version': __version__,
         'parallel_read_safe': True,
