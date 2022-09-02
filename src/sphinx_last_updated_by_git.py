@@ -12,7 +12,7 @@ from sphinx.util.matching import Matcher
 from sphinx.util import status_iterator
 
 
-__version__ = '0.3.3'
+__version__ = '0.3.4'
 
 
 logger = getLogger(__name__)

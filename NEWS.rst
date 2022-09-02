@@ -1,3 +1,6 @@
+Version 0.3.4 (2022-09-02):
+ * add ``git_exclude_patterns`` and ``git_exclude_commits`` features
+
 Version 0.3.3 (2022-08-21):
  * Remove ``page_source_suffix`` from ``context`` if there is no source link
 
