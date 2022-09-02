@@ -79,6 +79,16 @@ Caveats
 
       See also `issue #1`_.
 
+    * Starting with Sphinx version 5.0, there has been a
+      (most likely unintentional) change in how dependencies are determined.
+      This may lead to spurious dependencies which means that some
+      "last changed" dates might be wrong.
+      This will hopefully be fixed in a future Sphinx version.
+      In the meantime, Sphinx version 4.5.0  (with docutils 0.17.1)
+      can be used.
+
+      See also `issue #40`_.
+
 License
     BSD-2-Clause (same as Sphinx itself),
     for more information take a look at the ``LICENSE`` file.
@@ -108,3 +118,4 @@ Similar stuff
 .. _feature flag: https://docs.readthedocs.io/en/latest/
     guides/feature-flags.html
 .. _issue #1: https://github.com/mgeier/sphinx-last-updated-by-git/issues/1
+.. _issue #40: https://github.com/mgeier/sphinx-last-updated-by-git/issues/40
