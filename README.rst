@@ -79,13 +79,11 @@ Caveats
 
       See also `issue #1`_.
 
-    * Starting with Sphinx version 5.0, there has been a
-      (most likely unintentional) change in how dependencies are determined.
-      This may lead to spurious dependencies which means that some
-      "last changed" dates might be wrong.
-      This will hopefully be fixed in a future Sphinx version.
-      In the meantime, Sphinx version 4.5.0  (with docutils 0.17.1)
-      can be used.
+    * In Sphinx versions 5.0 and 5.1, there has been
+      a regression in how dependencies are determined.
+      This could lead to spurious dependencies
+      which means that some "last changed" dates were wrong.
+      This has been fixed in Sphinx version 5.2 and above.
 
       See also `issue #40`_.
 
