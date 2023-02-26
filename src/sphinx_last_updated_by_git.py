@@ -9,7 +9,11 @@ from sphinx.locale import _
 from sphinx.util.i18n import format_date
 from sphinx.util.logging import getLogger
 from sphinx.util.matching import Matcher
-from sphinx.util import status_iterator
+try:
+    from sphinx.util.display import status_iterator
+except ImportError:
+    # For older Sphinx versions, will be removed in Sphinx 8:
+    from sphinx.util import status_iterator
 
 
 __version__ = '0.3.4'
