@@ -1,8 +1,6 @@
 from pathlib import Path
-import subprocess
 import tempfile
 
-import pytest
 from sphinx.cmd.build import build_main
 
 
