@@ -58,9 +58,25 @@ Caveats
 
       This might happen on https://readthedocs.org/
       because they use shallow clones by default.
-      The ``DONT_SHALLOW_CLONE`` `feature flag`_ should fix this.
+      To avoid this problem, you can edit your config file ``.readthedocs.yml``:
 
-      If you want to get rid of the warning, use this in your ``conf.py``::
+      .. code:: yaml
+
+          version: 2
+          build:
+            os: "ubuntu-20.04"
+            tools:
+              python: "3"
+            jobs:
+              post_checkout:
+                - git fetch --unshallow || true
+
+      For more details, `read the docs`__.
+
+      __ https://docs.readthedocs.io/en/latest/build-customization.html#unshallow-git-clone
+
+      If you want to get rid of the warning (without actually fixing the problem),
+      use this in your ``conf.py``::
 
           suppress_warnings = ['git.too_shallow']
 
