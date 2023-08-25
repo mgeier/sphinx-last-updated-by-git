@@ -276,8 +276,10 @@ def _builder_inited(app):
 
 def _source_read(app, docname, source):
     env = app.env
-    assert docname not in env.git_last_updated
-    env.git_last_updated[docname] = None
+    # Since Sphinx 7.2, the source-read hook can be called multiple times
+    # when using .. include
+    if docname not in env.git_last_updated:
+        env.git_last_updated[docname] = None
 
 
 def _env_merge_info(app, env, docnames, other):
