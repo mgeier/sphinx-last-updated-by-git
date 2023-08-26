@@ -276,6 +276,11 @@ def _builder_inited(app):
 
 def _source_read(app, docname, source):
     env = app.env
+    if docname not in env.found_docs:
+        # Since Sphinx 7.2, "docname" can be None or a relative path
+        # to a file included with the "include" directive.
+        # We are only interested in actual source documents.
+        return
     assert docname not in env.git_last_updated
     env.git_last_updated[docname] = None
 
