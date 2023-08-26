@@ -275,6 +275,9 @@ def _builder_inited(app):
 
 
 def _source_read(app, docname, source):
+    if docname is None:
+        # This may happen since Sphinx 7.2.0?
+        return
     env = app.env
     assert docname not in env.git_last_updated
     env.git_last_updated[docname] = None
