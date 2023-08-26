@@ -276,10 +276,16 @@ def _builder_inited(app):
 
 def _source_read(app, docname, source):
     env = app.env
-    # Since Sphinx 7.2, the source-read hook can be called multiple times
-    # when using .. include
-    if docname not in env.git_last_updated:
-        env.git_last_updated[docname] = None
+    if docname not in env.found_docs:
+        # Since Sphinx 7.2, "docname" can be None or a relative path
+        # to a file included with the "include" directive.
+        # We are only interested in actual source documents.
+        return
+    if docname in env.git_last_updated:
+        # Again since Sphinx 7.2, the source-read hook can be called
+        # multiple times when using the "include" directive.
+        return
+    env.git_last_updated[docname] = None
 
 
 def _env_merge_info(app, env, docnames, other):

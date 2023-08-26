@@ -79,10 +79,6 @@ Caveats
 
       See also `issue #1`_.
 
-    * A regression in Sphinx version 7.2 prevents the extension from working
-      properly when using the ``.. include`` directive. See `Sphinx issue
-      #11643`_.
-
     * In Sphinx versions 5.0 and 5.1, there has been
       a regression in how dependencies are determined.
       This could lead to spurious dependencies
@@ -121,4 +117,3 @@ Similar stuff
     guides/feature-flags.html
 .. _issue #1: https://github.com/mgeier/sphinx-last-updated-by-git/issues/1
 .. _issue #40: https://github.com/mgeier/sphinx-last-updated-by-git/issues/40
-.. _Sphinx issue #11643: https://github.com/sphinx-doc/sphinx/issues/11643
