@@ -24,11 +24,12 @@ jobs:
         python tests/update_submodules.py
     - name: Install Python package
       env:
-        # See https://github.com/pypa/wheel/issues/507:
-        PYTHONWARNINGS: error,ignore:pkg_resources is deprecated:DeprecationWarning
+        PYTHONWARNINGS: error,default::DeprecationWarning
       run: |
         python -m pip install .
     - name: Install test dependencies
+      env:
+        PYTHONWARNINGS: error,default::DeprecationWarning
       run: |
         python -m pip install -r tests/requirements.txt
     - name: Run pytest
