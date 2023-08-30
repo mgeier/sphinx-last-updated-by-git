@@ -75,7 +75,20 @@ Caveats
 
       __ https://docs.readthedocs.io/en/latest/build-customization.html#unshallow-git-clone
 
-      If you want to get rid of the warning (without actually fixing the problem),
+      This might also happen when using Github Actions,
+      because `actions/checkout`__ also uses shallow clones by default.
+      This can be changed by using ``fetch-depth: 0``:
+
+      .. code:: yaml
+
+          steps:
+            - uses: actions/checkout@v3
+              with:
+                fetch-depth: 0
+
+      __ https://github.com/actions/checkout
+
+      If you only want to get rid of the warning (without actually fixing the problem),
       use this in your ``conf.py``::
 
           suppress_warnings = ['git.too_shallow']
