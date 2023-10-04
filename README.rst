@@ -33,7 +33,7 @@ Options
       You can specify a datetime.timezone_ object (or any ``tzinfo`` subclass
       instance) with the configuration option ``git_last_updated_timezone``.
       You can also use any string recognized by babel_,
-      e.g.  ``git_last_updated_timezone = 'NZ'``.
+      e.g. ``git_last_updated_timezone = 'Pacific/Auckland'``.
 
     * By default, the "last updated" timestamp is added as an HTML ``<meta>``
       tag.  This can be disabled by setting the configuration option
