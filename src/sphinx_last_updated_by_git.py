@@ -287,7 +287,7 @@ class LastUpdatedByGitDomain(Domain):
         self.timestamps.pop(docname, None)
 
     def merge_domaindata(self, docnames, otherdata):
-        for k, v in otherdata.items():
+        for k, v in otherdata['timestamps'].items():
             if k in docnames:
                 self.timestamps[k] = v
 
