@@ -140,7 +140,7 @@ def _env_updated(app, env):
     exclude_commits = set(
         map(lambda h: h.encode('utf-8'), app.config.git_exclude_commits))
 
-    domaindata = env.get_domain('last-updated-by-git').data
+    domaindata = env.get_domain('last-updated-by-git').timestamps
     for docname, data in domaindata.items():
         if data is not None:
             continue  # No need to update this source file
@@ -235,7 +235,7 @@ def _html_page_context(app, pagename, templatename, context, doctree):
         assert context['sourcename'] == ''
         return
 
-    data = app.env.get_domain('last-updated-by-git').data[pagename]
+    data = app.env.get_domain('last-updated-by-git').timestamps[pagename]
     if data is None:
         # There was a problem with git, a warning has already been issued
         timestamp = None
@@ -279,19 +279,20 @@ class LastUpdatedByGitDomain(Domain):
     # bump this when the format of `self.data` changes
     data_version = 0
 
+    @property
+    def timestamps(self):
+        return self.data.setdefault('timestamps', {})
+
     def clear_doc(self, docname):
-        try:
-            del self.data[docname]
-        except KeyError:
-            # This might happen with generic document names like "index"
-            pass
+        self.timestamps.pop(docname, None)
 
     def merge_domaindata(self, docnames, otherdata):
-        for docname in docnames:
-            self.data[docname] = otherdata[docname]
+        for k, v in otherdata.items():
+            if k in docnames:
+                self.timestamps[k] = v
 
     def process_doc(self, env, docname, document):
-        self.data[docname] = None
+        self.timestamps[docname] = None
 
 
 def setup(app):
