@@ -8,12 +8,15 @@ jobs:
     strategy:
       matrix:
         os: [macos-latest, windows-latest, ubuntu-latest]
-        python-version: ["3.7", "3.8", "3.9", "3.10", "3.11"]
+        python-version: ["3.8", "3.9", "3.10", "3.11", "3.12", "3.13-dev"]
     runs-on: ${{ matrix.os }}
     steps:
     - uses: actions/checkout@v4
     - name: Set up Python ${{ matrix.python-version }}
       uses: actions/setup-python@v5
+      # TODO: remove this once the warning is fixed in Python 3.13-dev:
+      env:
+        PYTHONWARNINGS: error,default::DeprecationWarning
       with:
         python-version: ${{ matrix.python-version }}
     - name: Double-check Python version
@@ -22,6 +25,11 @@ jobs:
     - name: Checkout submodules
       run: |
         python tests/update_submodules.py
+    - name: Upgrade pip
+      env:
+        PYTHONWARNINGS: error,default::DeprecationWarning
+      run: |
+        python -m pip install pip --upgrade
     - name: Install Python package
       env:
         PYTHONWARNINGS: error,default::DeprecationWarning
