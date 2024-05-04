@@ -1,3 +1,6 @@
+Version 0.3.7 (2024-05-04):
+ * Only documentation and CI updates
+
 Version 0.3.6 (2023-08-26):
  * Support for changed behavior of ``source-read`` event in Sphinx 7.2
 
