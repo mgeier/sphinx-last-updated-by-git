@@ -93,6 +93,13 @@ Caveats
 
           suppress_warnings = ['git.too_shallow']
 
+    * If depedency file does not exist, a warning is being emitted.
+
+      If you only want to get rid of the warning (without actually fixing the problem),
+      use this in your ``conf.py``::
+
+          suppress_warnings = ['git.dependency_not_found']
+
     * When a project on https://readthedocs.org/ using their default theme
       ``sphinx_rtd_theme`` was created before October 20th 2020,
       the date will not be displayed in the footer.

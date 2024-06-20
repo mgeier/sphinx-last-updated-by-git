@@ -189,6 +189,15 @@ def _env_updated(app, env):
             if excluded(dep):
                 continue
             depfile = Path(env.srcdir, dep).resolve()
+            if not depfile.exists():
+                logger.warning(
+                    "Dependency file %r, doesn't exist, skipping",
+                    depfile,
+                    location=docname,
+                    type='git',
+                    subtype='dependency_not_found',
+                )
+                continue
             dep_dates[depfile.parent][depfile.name] = None
             dep_paths[docname].append((depfile.parent, depfile.name))
 
