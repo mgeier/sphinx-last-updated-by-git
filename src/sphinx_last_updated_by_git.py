@@ -16,7 +16,7 @@ except ImportError:
     from sphinx.util import status_iterator
 
 
-__version__ = '0.3.7'
+__version__ = '0.3.8'
 
 
 logger = getLogger(__name__)

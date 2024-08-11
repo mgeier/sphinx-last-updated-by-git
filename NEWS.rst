@@ -1,3 +1,6 @@
+Version 0.3.8 (2024-08-11):
+ * Missing dependencies are ignored (but a warning is shown)
+
 Version 0.3.7 (2024-05-04):
  * Only documentation and CI updates
 
