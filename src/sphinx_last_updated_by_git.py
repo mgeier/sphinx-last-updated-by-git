@@ -5,6 +5,7 @@ from datetime import datetime, timezone
 from pathlib import Path
 import subprocess
 
+from sphinx.domains import Domain
 from sphinx.locale import _
 from sphinx.util.i18n import format_date
 from sphinx.util.logging import getLogger
@@ -139,7 +140,8 @@ def _env_updated(app, env):
     exclude_commits = set(
         map(lambda h: h.encode('utf-8'), app.config.git_exclude_commits))
 
-    for docname, data in env.git_last_updated.items():
+    domaindata = env.get_domain('last-updated-by-git').timestamps
+    for docname, data in domaindata.items():
         if data is not None:
             continue  # No need to update this source file
         if excluded(env.doc2path(docname, False)):
@@ -229,7 +231,7 @@ def _env_updated(app, env):
                     type='git', subtype='too_shallow')
         else:
             timestamp = None
-        env.git_last_updated[docname] = timestamp, show_sourcelink[docname]
+        domaindata[docname] = timestamp, show_sourcelink[docname]
 
 
 def _html_page_context(app, pagename, templatename, context, doctree):
@@ -242,7 +244,7 @@ def _html_page_context(app, pagename, templatename, context, doctree):
         assert context['sourcename'] == ''
         return
 
-    data = app.env.git_last_updated[pagename]
+    data = app.env.get_domain('last-updated-by-git').timestamps[pagename]
     if data is None:
         # There was a problem with git, a warning has already been issued
         timestamp = None
@@ -277,35 +279,29 @@ def _config_inited(app, config):
             config.git_last_updated_timezone)
 
 
-def _builder_inited(app):
-    env = app.env
-    if not hasattr(env, 'git_last_updated'):
-        env.git_last_updated = {}
+class LastUpdatedByGitDomain(Domain):
 
+    name = 'last-updated-by-git'
 
-def _source_read(app, docname, source):
-    env = app.env
-    if docname not in env.found_docs:
-        # Since Sphinx 7.2, "docname" can be None or a relative path
-        # to a file included with the "include" directive.
-        # We are only interested in actual source documents.
-        return
-    if docname in env.git_last_updated:
-        # Again since Sphinx 7.2, the source-read hook can be called
-        # multiple times when using the "include" directive.
-        return
-    env.git_last_updated[docname] = None
+    label = 'Information about "last updated" dates from Git'
 
+    # bump this when the format of `self.data` changes
+    data_version = 0
 
-def _env_merge_info(app, env, docnames, other):
-    env.git_last_updated.update(other.git_last_updated)
+    @property
+    def timestamps(self):
+        return self.data.setdefault('timestamps', {})
 
+    def clear_doc(self, docname):
+        self.timestamps.pop(docname, None)
 
-def _env_purge_doc(app, env, docname):
-    try:
-        del env.git_last_updated[docname]
-    except KeyError:
-        pass
+    def merge_domaindata(self, docnames, otherdata):
+        for k, v in otherdata['timestamps'].items():
+            if k in docnames:
+                self.timestamps[k] = v
+
+    def process_doc(self, env, docname, document):
+        self.timestamps[docname] = None
 
 
 def setup(app):
@@ -314,10 +310,6 @@ def setup(app):
     app.connect('html-page-context', _html_page_context)
     app.connect('config-inited', _config_inited)
     app.connect('env-updated', _env_updated)
-    app.connect('builder-inited', _builder_inited)
-    app.connect('source-read', _source_read)
-    app.connect('env-merge-info', _env_merge_info)
-    app.connect('env-purge-doc', _env_purge_doc)
     app.add_config_value(
         'git_untracked_check_dependencies', True, rebuild='env')
     app.add_config_value(
@@ -329,8 +321,9 @@ def setup(app):
     app.add_config_value('git_exclude_patterns', [], rebuild='env')
     app.add_config_value(
         'git_exclude_commits', [], rebuild='env')
+    app.add_domain(LastUpdatedByGitDomain)
     return {
         'version': __version__,
         'parallel_read_safe': True,
-        'env_version': 1,
+        'env_version': 2,
     }
