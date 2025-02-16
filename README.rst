@@ -13,6 +13,8 @@ The default value for html_last_updated_fmt_ is changed
 from ``None`` to the empty string.
 
 Usage
+    #. Make sure that you use a Sphinx theme that shows the "last updated"
+       information (or use a custom template with last_updated_)
     #. Install the Python package ``sphinx-last-updated-by-git``
     #. Add ``'sphinx_last_updated_by_git'`` to ``extensions`` in your ``conf.py``
     #. Run Sphinx!
