@@ -73,7 +73,7 @@ Caveats
 
       For more details, `read the docs`__.
 
-      __ https://docs.readthedocs.io/en/latest/build-customization.html#unshallow-git-clone
+      __ https://docs.readthedocs.com/platform/stable/build-customization.html#unshallow-git-clone
 
       This might also happen when using Github Actions,
       because `actions/checkout`__ also uses shallow clones by default.
@@ -104,10 +104,10 @@ Caveats
       ``sphinx_rtd_theme`` was created before October 20th 2020,
       the date will not be displayed in the footer.
 
-      One work-around is to enable the (undocumented) `feature flag`_
+      An outdated work-around is to enable the (undocumented) feature flag
       ``USE_SPHINX_LATEST``.
 
-      Another work-around is to override the defaults
+      A better work-around is to override the defaults
       by means of a ``requirements.txt`` file containing something like this::
 
           sphinx>=2
@@ -135,7 +135,7 @@ Similar stuff
 
 .. _Sphinx: https://www.sphinx-doc.org/
 .. _last_updated: https://www.sphinx-doc.org/en/master/
-    templating.html#last_updated
+    development/html_themes/templating.html#last_updated
 .. _exclude_patterns: https://www.sphinx-doc.org/en/master/usage/
     configuration.html#confval-exclude_patterns
 .. _autosummary_generate: https://www.sphinx-doc.org/en/master/
@@ -149,7 +149,5 @@ Similar stuff
 .. _datetime.timezone: https://docs.python.org/3/library/
     datetime.html#timezone-objects
 .. _babel: https://babel.pocoo.org/
-.. _feature flag: https://docs.readthedocs.io/en/latest/
-    guides/feature-flags.html
 .. _issue #1: https://github.com/mgeier/sphinx-last-updated-by-git/issues/1
 .. _issue #40: https://github.com/mgeier/sphinx-last-updated-by-git/issues/40
