@@ -1,38 +1,70 @@
 name: Run Tests
 on: [push, pull_request]
 env:
+  UV_PYTHON_DOWNLOADS: never
   PYTEST_ADDOPTS: "--color=yes"
   PYTHONWARNINGS: error
+  PYTHON_VERSION: "3"
+  SPHINX_PACKAGE: "sphinx"
 jobs:
-  pytest-uv-matrix:
+  uv:
     strategy:
       matrix:
-        os: [macos-latest, windows-latest, ubuntu-latest]
-        python-version: ["3.9", "3.13", "3.14-dev"]
+        include:
+          # default Python, different OSs
+          - os: ubuntu-latest
+          - os: macos-latest
+          - os: windows-latest
+
+          # different Python versions
+          - os: ubuntu-latest
+            env:
+              PYTHON_VERSION: "3.9"
+          - os: ubuntu-latest
+            env:
+              PYTHON_VERSION: "3.13"
+          - os: ubuntu-latest
+            env:
+              PYTHON_VERSION: "3.14"
+
+          # different Sphinx versions
+          - os: ubuntu-latest
+            env:
+              SPHINX_PACKAGE: "sphinx==6.2.1"
+              # datetime.utcfromtimestamp is deprecated in Python 3.12 (fixed in Sphinx 7.1)
+              PYTHON_VERSION: "3.11"
+          - os: ubuntu-latest
+            env:
+              SPHINX_PACKAGE: "sphinx==7.1"
+          - os: ubuntu-latest
+            env:
+              SPHINX_PACKAGE: "sphinx==7.4"
+          - os: ubuntu-latest
+            env:
+              SPHINX_PACKAGE: "sphinx==8.0"
+
     runs-on: ${{ matrix.os }}
+    env: ${{ matrix.env || fromJSON('{}') }}
     steps:
     - uses: actions/checkout@v5
-    - name: Set up Python ${{ matrix.python-version }}
+    - name: Set up Python ${{ env.PYTHON_VERSION }}
       uses: actions/setup-python@v6
       with:
-        python-version: ${{ matrix.python-version }}
+        python-version: ${{ env.PYTHON_VERSION }}
     - name: Checkout submodules
       run: |
         python tests/update_submodules.py
     - name: Install uv
       uses: astral-sh/setup-uv@v7
     - name: Install package
-      env:
-        # For MarkupSafe < 3.0.3 (https://github.com/pallets/markupsafe/pull/496)
-        PYTHONWARNINGS: error,default::UserWarning
       run: |
         uv sync --locked
     - name: Run pytest
       run: |
-        uv run --locked pytest
+        uv run --locked --with "$SPHINX_PACKAGE" pytest
 
   # Just to check if it's still compatible with pip.
-  pytest-pip:
+  pip:
     runs-on: "ubuntu-latest"
     steps:
     - uses: actions/checkout@v5
@@ -48,9 +80,6 @@ jobs:
       run: |
         python -m pip install pip --upgrade
     - name: Install Python package
-      env:
-        # For MarkupSafe < 3.0.3 (https://github.com/pallets/markupsafe/pull/496)
-        PYTHONWARNINGS: error,default::UserWarning
       run: |
         python -m pip install --group dev .
     - name: Run pytest
