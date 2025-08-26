@@ -1,4 +1,0 @@
-sphinx != 5.0.*, != 5.1.*
-pytest
-pytest-cov
-tzdata; sys_platform == "win32" and python_version >= "3.9"

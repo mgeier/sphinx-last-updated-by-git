@@ -1,3 +1,37 @@
 [build-system]
-requires = ["setuptools >= 40.8.0"]
+requires = ["setuptools"]
 build-backend = "setuptools.build_meta"
+
+[project]
+name = "sphinx-last-updated-by-git"
+license = "BSD-2-Clause"
+dynamic = ["version"]
+description = 'Get the "last updated" time for each Sphinx page from Git'
+readme = "README.rst"
+keywords = ["Sphinx", "Git"]
+authors = [{ name = "Matthias Geier", email = "Matthias.Geier@gmail.com" }]
+classifiers = [
+  "Framework :: Sphinx",
+  "Framework :: Sphinx :: Extension",
+  "Operating System :: OS Independent",
+  "Programming Language :: Python",
+  "Programming Language :: Python :: 3",
+  "Topic :: Documentation :: Sphinx",
+]
+requires-python = ">=3.7"
+dependencies = ["sphinx>=1.8"]
+
+[project.urls]
+Repository = "https://github.com/mgeier/sphinx-last-updated-by-git/"
+Issues = "https://github.com/mgeier/sphinx-last-updated-by-git/issues"
+
+[dependency-groups]
+dev = [
+  "pytest>=7.4.4",
+  "pytest-cov>=4.1.0",
+  "sphinx!=5.0.*,!=5.1.*",
+  "tzdata>=2025.2 ; python_full_version >= '3.9' and sys_platform == 'win32'",
+]
+
+[tool.setuptools.dynamic]
+version = { attr = "sphinx_last_updated_by_git.__version__" }
