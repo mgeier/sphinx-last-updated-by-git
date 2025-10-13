@@ -20,7 +20,7 @@ jobs:
       run: |
         python tests/update_submodules.py
     - name: Install uv
-      uses: astral-sh/setup-uv@v6
+      uses: astral-sh/setup-uv@v7
     - name: Install package
       env:
         # For MarkupSafe < 3.0.3 (https://github.com/pallets/markupsafe/pull/496)
