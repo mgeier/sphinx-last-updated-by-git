@@ -41,7 +41,10 @@ jobs:
               SPHINX_PACKAGE: "sphinx==7.4"
           - os: ubuntu-latest
             env:
-              SPHINX_PACKAGE: "sphinx==8.0"
+              SPHINX_PACKAGE: "sphinx >= 8, < 9"
+          - os: ubuntu-latest
+            env:
+              SPHINX_PACKAGE: "sphinx >= 9, < 10"
 
     runs-on: ${{ matrix.os }}
     env: ${{ matrix.env || fromJSON('{}') }}
