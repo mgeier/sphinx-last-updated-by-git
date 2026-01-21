@@ -19,12 +19,15 @@ except AttributeError:
 time1 = '2020-04-22 10:41:20'
 time2 = '2020-04-23 07:24:08'
 time3 = '2021-01-31 20:52:36'
+time4 = '2026-01-15 21:13:07'  # Unicode
+time5 = '2026-01-16 20:14:50'  # API docs
+time6 = '2026-01-19 17:24:34'  # merge feature branch
 
 expected_results = {
     'index': [time1, 'defined'],
-    'I 🖤 Unicode': [time3, 'defined'],
-    'api': [time2, 'defined'],
-    'example_module.example_function': [time2, 'undefined'],
+    'I 🖤 Unicode': [time6, 'defined'],
+    'api': [time5, 'defined'],
+    'example_module.example_function': [time5, 'undefined'],
     'search': ['None', 'undefined'],
 }
 
@@ -66,7 +69,7 @@ def test_untracked_show_sourcelink():
     )
     assert data == {
         **expected_results,
-        'example_module.example_function': [time2, 'defined'],
+        'example_module.example_function': [time5, 'defined'],
     }
 
 
@@ -171,11 +174,11 @@ def test_exclude_patterns_deps_dates():
 def test_exclude_commits_dates():
     data = run_sphinx(
         'repo_full',
-        git_exclude_commits='6bb90c6027c3788d3891f833f017dbf8d229e432')
+        git_exclude_commits='7f0faf7e62fdc49ef4c65d003002d454f79fa128')
     assert data == {
         **expected_results,
-        'api': [time1, 'defined'],
-        'example_module.example_function': [time1, 'undefined'],
+        'api': [time2, 'defined'],
+        'example_module.example_function': [time2, 'undefined'],
     }
 
 
@@ -183,15 +186,17 @@ def test_exclude_commits_warning(capsys):
     with pytest.raises(AssertionError):
         run_sphinx(
             'repo_full',
-            git_exclude_commits='23d25d0b7ac4604b7a9545420b2f9de84daabe73')
-    assert 'unhandled files' in capsys.readouterr().err
+            # TODO: remove 0a3b, merge commits should not be relevant here
+            git_exclude_commits='23d25d0b7ac4604b7a9545420b2f9de84daabe73,5ce13573d9ca44d35c18c5658fbe25e486a80b40,0a3b0953293759543a20fafc3105c35d0c597588')
+    assert 'due to excluded commits' in capsys.readouterr().err
 
 
 def test_exclude_commits_without_warning():
     data = run_sphinx(
         'repo_full',
         suppress_warnings='git.unhandled_files',
-        git_exclude_commits='23d25d0b7ac4604b7a9545420b2f9de84daabe73')
+        # TODO: remove 0a3b, see above
+        git_exclude_commits='23d25d0b7ac4604b7a9545420b2f9de84daabe73,5ce13573d9ca44d35c18c5658fbe25e486a80b40,0a3b0953293759543a20fafc3105c35d0c597588')
     assert data == {
         **expected_results,
         'I 🖤 Unicode': ['None', 'undefined'],
