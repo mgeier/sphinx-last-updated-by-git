@@ -53,7 +53,7 @@ def update_file_dates(git_dir, exclude_commits, file_dates, last_updated_when_me
     assert requested_files
 
     git_log_args = [
-        'git', 'log', '--pretty=format:%n%at%x00%H%x00%P',
+        'git', 'log', '--pretty=format:%n%H%x00%P%x00%at',
         '--author-date-order', '--relative', '--name-only',
         '--no-show-signature', '-z'
     ]
@@ -83,15 +83,8 @@ def parse_log(stream, requested_files, git_dir, exclude_commits, file_dates):
     assert not line0.rstrip(), 'unexpected git output in {}: {}'.format(
         git_dir, line0)
 
-    pending_header = None
     while requested_files:
-        # Use pending_header if we read ahead in the previous iteration
-        line1 = (
-            pending_header if pending_header is not None
-            else stream.readline()
-        )
-        pending_header = None
-
+        line1 = stream.readline()
         if not line1:
             msg = 'end of git log in {}, unhandled files: {}'
             assert exclude_commits, msg.format(
@@ -101,25 +94,20 @@ def parse_log(stream, requested_files, git_dir, exclude_commits, file_dates):
                 msg.format(git_dir, requested_files, exclude_commits),
                 type='git', subtype='unhandled_files')
             break
-        pieces = line1.rstrip().split(b'\0')
-        # Git outputs 3 pieces for regular commits, but 4 for merge commits
-        # (with trailing NUL). The 4th piece is empty.
-        assert len(pieces) in (3, 4), 'invalid git info in {}: {}'.format(
+        line1_stripped = line1.rstrip()
+        if line1_stripped.endswith(b'\0'):
+            # No file list available for this (merge) commit.
+            continue
+        pieces = line1_stripped.split(b'\0')
+        assert len(pieces) == 3, 'invalid git info in {}: {}'.format(
             git_dir, line1)
-        timestamp, commit, parent_commits = pieces[:3]
+        commit, parent_commits, timestamp = pieces
         line2 = stream.readline().rstrip()
-
-        # Since -m is not used, merge commits have no file list. If line2
-        # doesn't end with NUL, it's the next commit header, not a file list.
-        if not line2.endswith(b'\0'):
-            # Save it as the next header and skip this commit
-            pending_header = line2
-            continue
-
+        assert line2.endswith(b'\0'), 'unexpected file list in {}: {}'.format(
+            git_dir, line2)
         line2 = line2.rstrip(b'\0')
-        if not line2:
-            # Explicit empty file list: skip this commit
-            continue
+        assert line2, 'no changed files in {} (parent commit(s): {})'.format(
+            git_dir, parent_commits)
         changed_files = line2.split(b'\0')
 
         if commit in exclude_commits:
