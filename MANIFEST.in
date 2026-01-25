@@ -1,1 +1,5 @@
 include NEWS.rst
+
+# Include translation sources and compiled catalogs
+recursive-include src/locale *.po
+recursive-include src/locale *.mo

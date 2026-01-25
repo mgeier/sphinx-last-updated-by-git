@@ -5,7 +5,7 @@ from datetime import datetime, timezone
 from pathlib import Path
 import subprocess
 
-from sphinx.locale import _
+from sphinx.locale import _, get_translation
 from sphinx.util.i18n import format_date
 from sphinx.util.logging import getLogger
 from sphinx.util.matching import Matcher
@@ -20,6 +20,10 @@ __version__ = '0.3.8'
 
 
 logger = getLogger(__name__)
+
+# Translation function for this extension's own messages (domain-aware)
+MESSAGE_CATALOG_NAME = 'sphinx_last_updated_by_git'
+translate = get_translation(MESSAGE_CATALOG_NAME)
 
 
 def update_file_dates(git_dir, exclude_commits, file_dates, last_updated_when_merged):
@@ -53,7 +57,7 @@ def update_file_dates(git_dir, exclude_commits, file_dates, last_updated_when_me
     assert requested_files
 
     git_log_args = [
-        'git', 'log', '--pretty=format:%n%H%x00%P%x00%at',
+        'git', 'log', '--pretty=format:%n%H%x00%P%x00%aN%x00%at',
         '--author-date-order', '--relative', '--name-only',
         '--no-show-signature', '-z'
     ]
@@ -99,9 +103,9 @@ def parse_log(stream, requested_files, git_dir, exclude_commits, file_dates):
             # No file list available for this (merge) commit.
             continue
         pieces = line1_stripped.split(b'\0')
-        assert len(pieces) == 3, 'invalid git info in {}: {}'.format(
+        assert len(pieces) == 4, 'invalid git info in {}: {}'.format(
             git_dir, line1)
-        commit, parent_commits, timestamp = pieces
+        commit, parent_commits, author, timestamp = pieces
         line2 = stream.readline().rstrip()
         assert line2.endswith(b'\0'), 'unexpected file list in {}: {}'.format(
             git_dir, line2)
@@ -130,7 +134,9 @@ def parse_log(stream, requested_files, git_dir, exclude_commits, file_dates):
             except KeyError:
                 continue
             else:
-                file_dates[file.decode('utf-8')] = timestamp, too_shallow
+                file_dates[file.decode('utf-8')] = (
+                    timestamp, too_shallow, author.decode('utf-8')
+                )
 
 
 def _env_updated(app, env):
@@ -237,7 +243,7 @@ def _env_updated(app, env):
         timestamps = candi_dates[docname]
         if timestamps:
             # NB: too_shallow is only relevant if it affects the latest date.
-            timestamp, too_shallow = max(timestamps)
+            timestamp, too_shallow, author = max(timestamps)
             if too_shallow:
                 timestamp = None
                 logger.warning(
@@ -245,7 +251,10 @@ def _env_updated(app, env):
                     type='git', subtype='too_shallow')
         else:
             timestamp = None
-        env.git_last_updated[docname] = timestamp, show_sourcelink[docname]
+            author = None
+        env.git_last_updated[docname] = (
+            timestamp, show_sourcelink[docname], author
+        )
 
 
 def _html_page_context(app, pagename, templatename, context, doctree):
@@ -263,8 +272,9 @@ def _html_page_context(app, pagename, templatename, context, doctree):
         # There was a problem with git, a warning has already been issued
         timestamp = None
         show_sourcelink = False
+        author = None
     else:
-        timestamp, show_sourcelink = data
+        timestamp, show_sourcelink, author = data
     if not show_sourcelink:
         del context['sourcename']
         del context['page_source_suffix']
@@ -273,10 +283,17 @@ def _html_page_context(app, pagename, templatename, context, doctree):
 
     utc_date = datetime.fromtimestamp(int(timestamp), timezone.utc)
     date = utc_date.astimezone(app.config.git_last_updated_timezone)
-    context['last_updated'] = format_date(
+    date_str = format_date(
         lufmt or _('%b %d, %Y'),
         date=date,
         language=app.config.language)
+
+    if author and app.config.git_show_author:
+        # Append localized "by <author>" to the date string
+        author_str = translate('by %(author)s') % {'author': author}
+        context['last_updated'] = date_str + ' ' + author_str
+    else:
+        context['last_updated'] = date_str
 
     if app.config.git_last_updated_metatags:
         context['metatags'] += """
@@ -342,6 +359,16 @@ def setup(app):
         'git_last_updated_timezone', None, rebuild='env')
     app.add_config_value(
         'git_last_updated_metatags', True, rebuild='html')
+    app.add_config_value(
+        'git_show_author', False, rebuild='html')
+    # Register this extension's message catalog for i18n of convenience strings
+    try:
+        locale_dir = str((Path(__file__).parent / 'locale').resolve())
+        app.add_message_catalog(MESSAGE_CATALOG_NAME, locale_dir)
+    except Exception:
+        # If unavailable at build time, fail gracefully;
+        # strings will fall back to English
+        pass
     app.add_config_value('git_exclude_patterns', [], rebuild='env')
     app.add_config_value(
         'git_exclude_commits', [], rebuild='env')

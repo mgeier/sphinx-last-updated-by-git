@@ -35,3 +35,6 @@ dev = [
 
 [tool.setuptools.dynamic]
 version = { attr = "sphinx_last_updated_by_git.__version__" }
+
+[tool.setuptools]
+include-package-data = true
