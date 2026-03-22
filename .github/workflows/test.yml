@@ -35,13 +35,13 @@ jobs:
               PYTHON_VERSION: "3.11"
           - os: ubuntu-latest
             env:
-              SPHINX_PACKAGE: "sphinx==7.1"
-          - os: ubuntu-latest
-            env:
               SPHINX_PACKAGE: "sphinx==7.4"
           - os: ubuntu-latest
             env:
-              SPHINX_PACKAGE: "sphinx==8.0"
+              SPHINX_PACKAGE: "sphinx==8.2"
+          - os: ubuntu-latest
+            env:
+              SPHINX_PACKAGE: "sphinx==9.0"
 
     runs-on: ${{ matrix.os }}
     env: ${{ matrix.env || fromJSON('{}') }}
