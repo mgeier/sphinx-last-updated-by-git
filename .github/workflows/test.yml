@@ -58,7 +58,7 @@ jobs:
       uses: astral-sh/setup-uv@v7
     - name: Run pytest
       run: |
-        uv run --locked --with "$SPHINX_PACKAGE" pytest
+        uv run --verbose --locked --with "$SPHINX_PACKAGE" pytest
 
   # Just to check if it's still compatible with pip.
   pip:
