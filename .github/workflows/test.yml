@@ -19,7 +19,7 @@ jobs:
           # different Python versions
           - os: ubuntu-latest
             env:
-              PYTHON_VERSION: "3.9"
+              PYTHON_VERSION: "3.10"
           - os: ubuntu-latest
             env:
               PYTHON_VERSION: "3.13"
