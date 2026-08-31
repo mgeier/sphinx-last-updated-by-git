@@ -41,6 +41,12 @@ Options
       tag.  This can be disabled by setting the configuration option
       ``git_last_updated_metatags`` to ``False``.
 
+    * By default, only the date is shown in the "last updated" information.
+      You can also show the author of the last commit by setting
+      ``git_show_author = True`` in your ``conf.py``.
+      This will append "by <author name>" to the date string.
+      The author name is taken from the Git commit's author field (``%aN``).
+
     * Files can be excluded from the last updated date calculation by passing
       a list of exclusion patterns to the configuration option
       ``git_exclude_patterns``.
